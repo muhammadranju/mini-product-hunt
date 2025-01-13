@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { FaProductHunt } from "react-icons/fa";
+import { Link, NavLink } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
 const Navbar = () => {
@@ -29,23 +30,68 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
             >
               <li>
-                <a>Products</a>
+                <NavLink to={"/"}>Home</NavLink>
+              </li>
+              <li>
+                <NavLink to={"/products"}>Products</NavLink>
               </li>
             </ul>
           </div>
-          <Link to={"/"} className="btn btn-ghost text-xl">
-            daisyUI
-          </Link>
+          <NavLink
+            to={"/"}
+            className="btn btn-ghost text-xl flex items-center hover:bg-transparent bg-transparent"
+          >
+            <span className="text-blue-600 font-bold text-4xl">
+              <FaProductHunt />
+            </span>{" "}
+            <span className="text-slate-800 font-bold text-3xl -ml-2">
+              hunt
+            </span>
+          </NavLink>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
-              <a>Products</a>
+              <NavLink
+                className={({ isActive }) =>
+                  `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                    isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
+                  }`
+                }
+                to={"/"}
+              >
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                className={({ isActive }) =>
+                  `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                    isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
+                  }`
+                }
+                to={"/products"}
+              >
+                Products
+              </NavLink>
             </li>
           </ul>
         </div>
         <div className="navbar-end">
-          <a className="btn">Button</a>
+          <div className="flex gap-x-2">
+            <NavLink
+              to={"/auth/login"}
+              className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+            >
+              Sign In
+            </NavLink>
+            <NavLink
+              to={"/auth/signup"}
+              className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+            >
+              Sign Up
+            </NavLink>
+          </div>
           <details className="dropdown">
             <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none">
               <div className="flex items-center justify-start space-x-1">
@@ -65,11 +111,13 @@ const Navbar = () => {
                 </div>
               </div>
             </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] lg:-ml-10 -ml-12 w-44 p-2 shadow">
-              <li className="text-lg ml-4">User Name</li>
-              <li className="text-lg">
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] lg:-ml-10 -ml-12 lg:w-44 p-2 shadow">
+              <li className="text-lg font-semibold ml-4 text-slate-800">
+                User Name
+              </li>
+              <li className="text-lg text-slate-800">
                 {/* <IoIosLogOut className="text-xl font-bold" /> */}
-                <Link to={"/dashboard/user/my-profile"}>Dashboard</Link>
+                <NavLink to={"/dashboard/user/my-profile"}>Dashboard</NavLink>
               </li>
               <li>
                 <button

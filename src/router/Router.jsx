@@ -11,6 +11,8 @@ import ReportedContents from "@/pages/Dashboard/Moderator/ReportedContents";
 import AddProduct from "@/pages/Dashboard/User/AddProduct";
 import MyProduct from "@/pages/Dashboard/User/MyProduct";
 import MyProfile from "@/pages/Dashboard/User/MyProfile";
+import Home from "@/pages/Home/Home";
+import NotFound from "@/pages/NotFound/NotFound";
 import ProductDetails from "@/pages/Product/ProductDetails";
 import Products from "@/pages/Product/products";
 import { createBrowserRouter } from "react-router-dom";
@@ -19,17 +21,18 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
-        element: <>Home</>,
+        element: <Home />,
       },
       {
         path: "products",
         element: <Products />,
       },
       {
-        path: "products/:id",
+        path: "product/:id",
         element: <ProductDetails />,
       },
       {
@@ -39,11 +42,6 @@ const router = createBrowserRouter([
       {
         path: "auth/signup",
         element: <Signup />,
-      },
-
-      {
-        path: "*",
-        element: <>404</>,
       },
     ],
   },
