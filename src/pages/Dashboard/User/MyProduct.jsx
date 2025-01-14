@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { AuthContext } from "@/context/AuthProvider";
 
 const MyProduct = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     // Fetch user's products from the database (mocked here)
     const fetchProducts = async () => {
-      // Replace with actual API call
-      const mockProducts = [
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products?email=${user.email}`,
         {
-          id: 1,
-          name: "Product 1",
-          votes: 12,
-          status: "Pending",
-        },
-        {
-          id: 2,
-          name: "Product 2",
-          votes: 8,
-          status: "Accepted",
-        },
-      ];
-      setProducts(mockProducts);
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setProducts(data.data);
+      }
     };
 
     fetchProducts();
@@ -53,6 +53,9 @@ const MyProduct = () => {
             <thead>
               <tr className="bg-gray-100">
                 <th className="py-3 px-4 border-b text-left text-gray-600">
+                  Product Image
+                </th>
+                <th className="py-3 px-4 border-b text-left text-gray-600">
                   Product Name
                 </th>
                 <th className="py-3 px-4 border-b text-left text-gray-600">
@@ -70,20 +73,26 @@ const MyProduct = () => {
               {products.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50">
                   <td className="py-3 px-4 border-b text-gray-800">
-                    {product.name}
+                    <img
+                      src={product.productImage}
+                      className="w-12 h-12 rounded-md"
+                    />
+                  </td>
+                  <td className="py-3 px-4 border-b text-gray-800">
+                    {product.productName}
                   </td>
                   <td className="py-3 px-4 border-b text-center text-gray-700">
-                    {product.votes}
+                    {product.upvotes}
                   </td>
                   <td className="py-3 px-4 border-b text-center">
                     <span
                       className={`${
-                        product.status === "Accepted"
+                        product.status === "accepted"
                           ? "bg-green-200 text-green-800"
-                          : product.status === "Rejected"
+                          : product.status === "rejected"
                           ? "bg-red-200 text-red-800"
                           : "bg-yellow-200 text-yellow-800"
-                      } py-1 px-3 rounded-full text-sm`}
+                      } py-1 px-3 rounded-full text-sm capitalize`}
                     >
                       {product.status}
                     </span>

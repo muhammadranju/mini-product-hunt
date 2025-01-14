@@ -3,25 +3,32 @@ import { useNavigate } from "react-router-dom";
 import { TagsInput } from "react-tag-input-component";
 import toast from "react-hot-toast";
 import { AuthContext } from "@/context/AuthProvider";
+import swal from "sweetalert";
 
 const AddProduct = () => {
-  const { user } = useContext(AuthContext); // Assume user info comes from context
+  const { user, signOut } = useContext(AuthContext); // Assume user info comes from context
   const [productName, setProductName] = useState("");
-  const [productImage, setProductImage] = useState(null);
+  const [productImage, setProductImage] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState([]);
   const [externalLink, setExternalLink] = useState("");
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
-    setProductImage(e.target.files[0]);
+    setProductImage(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!productName || !productImage || !description) {
-      toast.error("Please fill in all required fields.");
+    if (
+      !productName ||
+      !productImage ||
+      !description ||
+      !externalLink ||
+      !tags
+    ) {
+      toast.error("Please fill in all  fields.");
       return;
     }
 
@@ -29,8 +36,8 @@ const AddProduct = () => {
       productName,
       productImage, // You would typically handle the image upload separately
       description,
-      ownerName: user.name,
-      ownerImage: user.image,
+      ownerName: user.displayName,
+      ownerImage: user.photoURL,
       ownerEmail: user.email,
       tags,
       externalLink,
@@ -39,11 +46,52 @@ const AddProduct = () => {
 
     // Simulate saving to database
     try {
+      console.log(productData);
       // Replace with actual API call to save product data
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Product added successfully!");
-      navigate("/dashboard/user/my-product");
+      // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+
+          body: JSON.stringify(productData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.status === 400) {
+        toast.error(data.message);
+        swal({
+          title: "Reached the Limit!",
+          text: "Get subscription to add more products.",
+          icon: "error",
+          button: "Ok",
+        });
+        navigate("/dashboard/user/my-profile", { replace: true });
+        return;
+      }
+      if (
+        data.status === 401 &&
+        data.message === "Please provide a valid token."
+      ) {
+        toast.error("Please login to add a product.");
+        signOut();
+        navigate("/auth/login", { replace: true });
+      }
+
+      console.log(data);
+      if (response.ok) {
+        toast.success("Product added successfully!");
+        navigate("/dashboard/user/my-product", { replace: true });
+      }
     } catch (error) {
+      console.log(error);
       toast.error("Failed to add product.");
     }
   };
@@ -61,7 +109,6 @@ const AddProduct = () => {
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              required
               placeholder="Product Name"
             />
           </div>
@@ -74,7 +121,6 @@ const AddProduct = () => {
               type="text"
               onChange={handleImageChange}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              required
               placeholder="Product Image"
             />
           </div>
@@ -87,7 +133,6 @@ const AddProduct = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
-              required
               placeholder="Description"
             />
           </div>
@@ -139,6 +184,16 @@ const AddProduct = () => {
                 value={user.email}
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100"
                 disabled
+              />
+            </div>
+            <div className="mb-4 w-full">
+              <label className="block text-sm font-medium text-gray-700">
+                Owner Image
+              </label>
+              <img
+                src={user.photoURL}
+                alt=""
+                className="w-12 h-12 rounded-full"
               />
             </div>
           </div>

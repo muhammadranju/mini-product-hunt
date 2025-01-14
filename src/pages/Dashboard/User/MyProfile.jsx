@@ -6,14 +6,8 @@ import toast from "react-hot-toast";
 const MyProfile = () => {
   const { user, signOut } = useContext(AuthContext);
   const [role] = useRole();
-  // const [user, setUser] = useState({
-  //   name: "John Doe",
-  //   image: "https://via.placeholder.com/150",
-  //   email: "john.doe@example.com",
-  //   isSubscribed: false,
-  //   subscriptionAmount: "$9.99",
-  //   status: "Verified",
-  // });
+  console.log(role);
+
   const handleSubscribe = () => {
     // Simulate subscription logic
     toast.success("Redirecting to payment page...");
@@ -22,7 +16,7 @@ const MyProfile = () => {
     toast.success("Subscription successful!");
   };
 
-  const isSubscribed = false;
+  const isSubscribed = role?.user?.subscription;
   return (
     <div className="ml-0 md:ml-64 py-16  h-screen overflow-auto pt-36 bg-gray-50">
       <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
