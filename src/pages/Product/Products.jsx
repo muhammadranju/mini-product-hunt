@@ -1,7 +1,44 @@
 import Cards from "@/components/Cards/Cards";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BackendURL
+        }/api/products?page=${currentPage}&limit=${limit}`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setProducts(data.data);
+        setTotalPages(data.pagination.totalPages);
+      }
+    };
+    fetchProducts();
+  }, [currentPage, limit]);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <>
       <div className="w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto my-20">
@@ -15,17 +52,34 @@ const Products = () => {
           <input
             type="text"
             placeholder="Search your product with tags..."
-            className="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+            className="block mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
           />
         </div>
 
-        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5">
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
-          <Cards />
+        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-16">
+          {products?.reverse()?.map((product) => (
+            <Cards key={product._id} product={product} />
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-5">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="mx-1 px-4 py-2 border rounded bg-white text-slate-800"
+          >
+            Prev
+          </button>
+          <span className="mx-2 px-4 py-2 border rounded bg-slate-500 text-white">
+            {currentPage}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="mx-1 px-4 py-2 border rounded bg-white text-slate-800"
+          >
+            Next
+          </button>
         </div>
       </div>
     </>

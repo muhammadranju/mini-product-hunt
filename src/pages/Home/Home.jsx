@@ -1,7 +1,29 @@
 import Cards from "@/components/Cards/Cards";
+import FeaturedProductsSection from "@/components/FeaturedProductsSection/FeaturedProductsSection";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products`,
+        {
+          method: "GET",
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setProducts(data.data);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  console.log(products);
   return (
     <>
       <section className="relative w-full h-96 bg-slate-900 text-white flex items-center justify-center">
@@ -18,19 +40,7 @@ const Home = () => {
         {/* Banner Section */}
 
         {/* Featured Products Section */}
-        <section className="py-16 ">
-          <div className=" mx-auto px-4 sm:px-6 lg:px-8">
-            <h3 className="text-3xl font-bold text-slate-900 mb-8">
-              Featured Products
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {/* Product Cards */}
-              {[...Array(4)].map((_, index) => (
-                <Cards />
-              ))}
-            </div>
-          </div>
-        </section>
+        <FeaturedProductsSection></FeaturedProductsSection>
 
         {/* Trending Products Section */}
         <section className="py-16 ">
@@ -40,9 +50,12 @@ const Home = () => {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Product Cards */}
-              {[...Array(6)].map((_, index) => (
-                <Cards />
-              ))}
+              {products
+                ?.slice(0, 6)
+
+                .map((product) => (
+                  <Cards product={product} />
+                ))}
             </div>
             <div className="flex justify-center items-center mt-5">
               <Link to={"/products"}>
