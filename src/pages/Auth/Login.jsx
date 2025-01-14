@@ -9,7 +9,6 @@ import {
 import toast from "react-hot-toast";
 import { auth } from "@/firebase/firebase.config";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import Cookies from "js-cookie";
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -25,6 +24,7 @@ const Login = () => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -57,12 +57,15 @@ const Login = () => {
 
         console.log(user);
 
-        Cookies.set("token", user?.token, { expires: 15 });
+        // Check if token already exists
+        if (!localStorage.getItem("token")) {
+          localStorage.setItem("token", user?.token);
+        }
+
         navigate(location.state ? location.state : "/");
       }
       setLoading(false);
       toast.success("User login Successfully!");
-      // navigate("/", { replace: true });
       navigate(location.state ? location.state : "/");
     } catch (error) {
       console.error("Login error", error);
@@ -100,7 +103,11 @@ const Login = () => {
 
         console.log(user);
 
-        Cookies.set("token", user?.token, { expires: 15 });
+        // Check if token already exists
+        if (!localStorage.getItem("token")) {
+          localStorage.setItem("token", user?.token);
+        }
+
         navigate(location.state ? location.state : "/");
       }
       navigate("/", { replace: true });

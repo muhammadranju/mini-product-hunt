@@ -3,15 +3,12 @@ import { Navigate, useLocation } from "react-router-dom";
 import { RotatingLines } from "react-loader-spinner";
 import { AuthContext } from "../context/AuthProvider";
 
-import Cookies from "js-cookie";
-
 /* eslint-disable react/prop-types */
 const PrivateRoutes = ({ children }) => {
   const { user, loading, signOut } = useContext(AuthContext);
   const location = useLocation();
 
-  const token = Cookies.get("token");
-
+  const token = localStorage.getItem("token");
   if (loading)
     return (
       <div className="flex justify-center items-center mt-72">

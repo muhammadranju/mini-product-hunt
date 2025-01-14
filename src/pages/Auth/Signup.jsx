@@ -6,7 +6,6 @@ import {
   signInWithPopup,
   updateProfile,
 } from "firebase/auth";
-import Cookies from "js-cookie";
 import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -21,7 +20,6 @@ const Signup = () => {
   });
 
   const { user, setLoading, setRefetch } = useContext(AuthContext);
-
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -44,6 +42,7 @@ const Signup = () => {
     }
     return true;
   };
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -94,7 +93,12 @@ const Signup = () => {
           }
         );
         const data = await returnData.json();
-        Cookies.set("token", data?.token, { expires: 15 });
+
+        // Store token in local storage if it doesn't already exist
+        if (!localStorage.getItem("token")) {
+          localStorage.setItem("token", data?.token);
+        }
+
         console.log(data);
         navigate("/");
         setLoading(false);
@@ -106,8 +110,6 @@ const Signup = () => {
       }
     }
   };
-
-  console.log(user);
 
   const handelGoogleSignup = async () => {
     const googleProvider = new GoogleAuthProvider();
@@ -131,10 +133,15 @@ const Signup = () => {
         );
 
         const user = await userData.json();
-        Cookies.set("token", user?.token, { expires: 15 });
+
+        // Store token in local storage if it doesn't already exist
+        if (!localStorage.getItem("token")) {
+          localStorage.setItem("token", user?.token);
+        }
+
         toast.success("User Registered Successfully!");
-        navigate("/");
         console.log(user);
+        navigate("/");
       }
     } catch (error) {
       if (error.message.includes("auth/popup-closed-by-user")) {
@@ -143,8 +150,9 @@ const Signup = () => {
       console.error(error); // Always good to log errors for debugging
     }
   };
+
   return (
-    <div className="flex w-full max-w-md my-20  mx-auto overflow-hidden rounded-lg shadow-lg lg:max-w-5xl">
+    <div className="flex w-full max-w-md my-20 mx-auto overflow-hidden rounded-lg shadow-lg lg:max-w-5xl">
       <div
         className="hidden bg-cover lg:block lg:w-1/2"
         style={{
