@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import {
   MdAdminPanelSettings,
@@ -11,8 +11,10 @@ import { FaUser } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
 import { AiFillProduct } from "react-icons/ai";
 import { RiCoupon2Fill } from "react-icons/ri";
+import { AuthContext } from "@/context/AuthProvider";
 
 const Sidebar = ({ isSidebarOpen }) => {
+  const { signOut } = useContext(AuthContext);
   return (
     <aside
       className={`fixed inset-y-0 left-0 bg-white shadow-md max-h-screen w-64 mt-20 transition-transform transform ${
@@ -150,7 +152,7 @@ const Sidebar = ({ isSidebarOpen }) => {
             </ul>
           </div>
         </div>
-        <div className="p-4">
+        <div className="p-4" onClick={signOut}>
           <Link to={"/"}>
             <button
               type="button"

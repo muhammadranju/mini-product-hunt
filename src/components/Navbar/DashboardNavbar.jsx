@@ -1,8 +1,11 @@
-import React from "react";
+import { AuthContext } from "@/context/AuthProvider";
+import React, { useContext } from "react";
 import { FaProductHunt } from "react-icons/fa";
+import { IoIosLogOut } from "react-icons/io";
 import { Link, NavLink } from "react-router-dom";
 
 const DashboardNavbar = ({ toggleSidebar }) => {
+  const { user, signOut } = useContext(AuthContext);
   return (
     <header className="fixed right-0 top-0 left-0 bg-white shadow py-4 px-4 h-20 z-10">
       <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
@@ -60,43 +63,27 @@ const DashboardNavbar = ({ toggleSidebar }) => {
               </svg>
             </span>
           </button> */}
-          <details className="dropdown">
-            <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none">
-              <div className="flex items-center justify-start space-x-1">
-                <div
-                  className="dropdown bg-white/70 rounded-full  border-2 tooltip tooltip-bottom"
-                  data-tooltip-id="my-tooltip"
-                >
-                  <img
-                    src={"https://avatars.githubusercontent.com/u/80270685?v=4"}
-                    className="lg:w-12 w-14  rounded-full    p-1"
-                    alt=""
-                  />
-                </div>
-                <div className="text-start lg:flex flex-col hidden">
-                  <p className="text-base ">{"User Name"}</p>
-                  <span className="text-xs">My Account</span>
-                </div>
-              </div>
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] lg:-ml-10 -ml-12 lg:w-44 p-2 shadow">
-              <li className="text-lg font-semibold ml-4 text-slate-800">
-                User Name
-              </li>
-              <li className="text-lg text-slate-800">
-                {/* <IoIosLogOut className="text-xl font-bold" /> */}
-                <Link to={"/dashboard/user/my-profile"}>Dashboard</Link>
-              </li>
-              <li>
-                <button
-                  //   onClick={}
-                  className="btn mt-1 bg-red-600 text-white hover:bg-red-700 "
-                >
-                  Log Out
-                </button>
-              </li>
-            </ul>
-          </details>
+          {/* <details className="dropdown"> */}
+          {/* <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none"> */}
+          <div className="flex items-center justify-start space-x-1">
+            <div
+              className="dropdown bg-white/70 rounded-full  border-2 tooltip tooltip-bottom"
+              data-tooltip-id="my-tooltip"
+            >
+              <img
+                src={
+                  user?.photoURL ||
+                  "https://avatars.githubusercontent.com/u/80270685?v=4"
+                }
+                className="lg:w-12 w-14  rounded-full    p-1"
+                alt=""
+              />
+            </div>
+            <div className="text-start lg:flex flex-col hidden">
+              <p className="text-base ">{user?.displayName}</p>
+              <span className="text-xs">My Account</span>
+            </div>
+          </div>
         </div>
       </div>
     </header>

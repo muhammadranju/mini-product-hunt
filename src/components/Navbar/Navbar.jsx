@@ -1,9 +1,12 @@
-import React from "react";
+import { AuthContext } from "@/context/AuthProvider";
+import React, { useContext } from "react";
 import { FaProductHunt } from "react-icons/fa";
-import { Link, NavLink } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
+import { IoIosLogOut, IoMdLogIn } from "react-icons/io";
+import { NavLink } from "react-router-dom";
+import { LiaSignInAltSolid } from "react-icons/lia";
 
 const Navbar = () => {
+  const { user, signOut } = useContext(AuthContext);
   return (
     <div className="shadow sticky top-0 z-50 backdrop-blur-md bg-opacity-70 bg-white/70">
       <div className="navbar w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto">
@@ -78,57 +81,64 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <div className="flex gap-x-2">
-            <NavLink
-              to={"/auth/login"}
-              className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
-            >
-              Sign In
-            </NavLink>
-            <NavLink
-              to={"/auth/signup"}
-              className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
-            >
-              Sign Up
-            </NavLink>
-          </div>
-          <details className="dropdown">
-            <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none">
-              <div className="flex items-center justify-start space-x-1">
-                <div
-                  className="dropdown bg-white/70 rounded-full  border-2 tooltip tooltip-bottom"
-                  data-tooltip-id="my-tooltip"
-                >
-                  <img
-                    src={"https://avatars.githubusercontent.com/u/80270685?v=4"}
-                    className="lg:w-12 w-14  rounded-full    p-1"
-                    alt=""
-                  />
+          {!user && (
+            <div className="flex gap-x-2">
+              <NavLink
+                to={"/auth/login"}
+                className="px-4 py-3 flex items-center text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+              >
+                <IoMdLogIn className="text-xl" /> Sign In
+              </NavLink>
+              <NavLink
+                to={"/auth/signup"}
+                className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+              >
+                Sign Up
+              </NavLink>
+            </div>
+          )}
+          {user && (
+            <details className="dropdown">
+              <summary className="btn m-1 bg-transparent border-none hover:bg-transparent shadow-none">
+                <div className="flex items-center justify-start space-x-1">
+                  <div
+                    className="dropdown bg-white/70 rounded-full  border-2 tooltip tooltip-bottom"
+                    data-tooltip-id="my-tooltip"
+                  >
+                    <img
+                      src={
+                        user?.photoURL ||
+                        "https://avatars.githubusercontent.com/u/80270685?v=4"
+                      }
+                      className="lg:w-12 w-14  rounded-full    p-1"
+                      alt=""
+                    />
+                  </div>
+                  <div className="text-start lg:flex flex-col hidden">
+                    <p className="text-base ">{user?.displayName}</p>
+                    <span className="text-xs">My Account</span>
+                  </div>
                 </div>
-                <div className="text-start lg:flex flex-col hidden">
-                  <p className="text-base ">{"User Name"}</p>
-                  <span className="text-xs">My Account</span>
-                </div>
-              </div>
-            </summary>
-            <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] lg:-ml-10 -ml-12 lg:w-44 p-2 shadow">
-              <li className="text-lg font-semibold ml-4 text-slate-800">
-                User Name
-              </li>
-              <li className="text-lg text-slate-800">
-                {/* <IoIosLogOut className="text-xl font-bold" /> */}
-                <NavLink to={"/dashboard/user/my-profile"}>Dashboard</NavLink>
-              </li>
-              <li>
-                <button
-                  //   onClick={}
-                  className="btn mt-1 bg-red-600 text-white hover:bg-red-700 "
-                >
-                  Log Out
-                </button>
-              </li>
-            </ul>
-          </details>
+              </summary>
+              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] lg:-ml-10 -ml-12 lg:w-44 p-2 shadow">
+                <li className="text-lg font-semibold ml-4 text-slate-800">
+                  {user?.displayName}
+                </li>
+                <li className="text-lg text-slate-800">
+                  <NavLink to={"/dashboard/user/my-profile"}>Dashboard</NavLink>
+                </li>
+                <li>
+                  <button
+                    onClick={signOut}
+                    className="btn mt-1 bg-red-600 text-white hover:bg-red-700 "
+                  >
+                    <IoIosLogOut className="text-xl font-bold" />
+                    Log Out
+                  </button>
+                </li>
+              </ul>
+            </details>
+          )}
         </div>
       </div>
     </div>

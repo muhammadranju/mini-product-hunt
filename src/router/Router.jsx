@@ -16,6 +16,7 @@ import NotFound from "@/pages/NotFound/NotFound";
 import ProductDetails from "@/pages/Product/ProductDetails";
 import Products from "@/pages/Product/products";
 import { createBrowserRouter } from "react-router-dom";
+import PrivateRoutes from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -33,7 +34,11 @@ const router = createBrowserRouter([
       },
       {
         path: "product/:id",
-        element: <ProductDetails />,
+        element: (
+          <PrivateRoutes>
+            <ProductDetails />
+          </PrivateRoutes>
+        ),
       },
       {
         path: "auth/login",
@@ -47,7 +52,11 @@ const router = createBrowserRouter([
   },
   {
     path: "dashboard",
-    element: <DashboardRoot />,
+    element: (
+      <PrivateRoutes>
+        <DashboardRoot />
+      </PrivateRoutes>
+    ),
     children: [
       {
         index: true,

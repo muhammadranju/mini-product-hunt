@@ -1,4 +1,5 @@
 import React from "react";
+import { FaChevronUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Cards = () => {
@@ -7,7 +8,7 @@ const Cards = () => {
       <Link to={"/product/jhsd"}>
         <img
           className="w-full h-48 object-cover rounded-md mb-4"
-          src={`https://via.placeholder.com/300x200?text=Product+`}
+          src={`https://images.newscientist.com/wp-content/uploads/2023/10/27110638/SEI_177661765.jpg`}
           alt={`Trending Product `}
         />
       </Link>
@@ -21,7 +22,8 @@ const Cards = () => {
         <div className="badge badge-ghost">ghost</div>
       </div>
       <div className="flex items-center space-x-2">
-        <button className="bg-slate-800 text-slate-50 py-2 px-4 rounded-lg">
+        <button className="bg-slate-800 text-slate-50 py-2 px-4 rounded-lg flex items-center space-x-2">
+          <FaChevronUp className="mr-1" />
           Upvote 25
         </button>
       </div>
