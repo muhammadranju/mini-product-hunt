@@ -17,6 +17,7 @@ import ProductDetails from "@/pages/Product/ProductDetails";
 import Products from "@/pages/Product/products";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoutes from "./PrivateRoute";
+import IsAdmin from "./IsAdmin";
 
 const router = createBrowserRouter([
   {
@@ -87,15 +88,28 @@ const router = createBrowserRouter([
       // Admin Dashboard
       {
         path: "admin/statistics",
-        element: <Statistics />,
+
+        element: (
+          <IsAdmin>
+            <Statistics />
+          </IsAdmin>
+        ),
       },
       {
         path: "admin/manage-users",
-        element: <ManageUsers />,
+        element: (
+          <IsAdmin>
+            <ManageUsers />
+          </IsAdmin>
+        ),
       },
       {
         path: "admin/manage-coupons",
-        element: <ManageCoupons />,
+        element: (
+          <IsAdmin>
+            <ManageCoupons />
+          </IsAdmin>
+        ),
       },
     ],
   },

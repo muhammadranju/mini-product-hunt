@@ -9,6 +9,7 @@ import {
 import toast from "react-hot-toast";
 import { auth } from "@/firebase/firebase.config";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -36,6 +37,29 @@ const Login = () => {
     }
     try {
       const isUser = await signInWithEmailAndPassword(auth, email, password);
+      console.log(isUser);
+      if (isUser) {
+        const userData = await fetch(
+          `${import.meta.env.VITE_BackendURL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              name: isUser?.user.displayName,
+              photoURL: isUser?.user.photoURL,
+            }),
+          }
+        );
+        const user = await userData.json();
+
+        console.log(user);
+
+        Cookies.set("token", user?.token, { expires: 15 });
+        navigate(location.state ? location.state : "/");
+      }
       setLoading(false);
       toast.success("User login Successfully!");
       // navigate("/", { replace: true });
@@ -56,7 +80,29 @@ const Login = () => {
     const googleProvider = new GoogleAuthProvider();
     try {
       const googleUser = await signInWithPopup(auth, googleProvider);
+      const { email, displayName, photoURL } = googleUser.user;
+      if (googleUser) {
+        const userData = await fetch(
+          `${import.meta.env.VITE_BackendURL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: email,
+              name: displayName,
+              photoURL: photoURL,
+            }),
+          }
+        );
+        const user = await userData.json();
 
+        console.log(user);
+
+        Cookies.set("token", user?.token, { expires: 15 });
+        navigate(location.state ? location.state : "/");
+      }
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Google login error", error);
@@ -74,14 +120,7 @@ const Login = () => {
         }}
       />
       <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
-        <div className="flex justify-center mx-auto">
-          <img
-            className="w-auto h-7 sm:h-8"
-            src="https://merakiui.com/images/logo.svg"
-            alt=""
-          />
-        </div>
-        <p className="mt-3 text-xl text-center text-slate-600 dark:text-slate-200">
+        <p className="mt-3 font-bold text-2xl text-center text-slate-600 dark:text-slate-200">
           Welcome back!
         </p>
         <button
@@ -187,7 +226,7 @@ const Login = () => {
             to="/auth/signup"
             className="text-xs text-slate-500 uppercase dark:text-slate-400 hover:underline"
           >
-            or sign up
+            don't have an account?
           </Link>
           <span className="w-1/5 border-b dark:border-slate-600 md:w-1/4" />
         </div>

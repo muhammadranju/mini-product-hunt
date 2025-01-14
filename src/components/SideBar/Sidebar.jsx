@@ -12,8 +12,10 @@ import { IoMdAddCircle } from "react-icons/io";
 import { AiFillProduct } from "react-icons/ai";
 import { RiCoupon2Fill } from "react-icons/ri";
 import { AuthContext } from "@/context/AuthProvider";
+import useRole from "@/hooks/useRole";
 
 const Sidebar = ({ isSidebarOpen }) => {
+  const [role, isLoading] = useRole();
   const { signOut } = useContext(AuthContext);
   return (
     <aside
@@ -31,124 +33,189 @@ const Sidebar = ({ isSidebarOpen }) => {
           </div>
           <div className="p-4">
             <ul className="space-y-1">
-              <li>
-                <NavLink
-                  to="/dashboard"
-                  end
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <MdDashboard className="mr-2 text-lg" />
-                  Dashboard
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/user/my-profile"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <FaUser className="mr-2 text-lg" />
-                  My Profile
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/user/add-product"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <IoMdAddCircle className="mr-2 text-lg" />
-                  Add Product
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/user/my-product"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <AiFillProduct className="mr-2 text-lg" />
-                  My Product
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/moderator/product-review"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <MdRateReview className="mr-2 text-lg" />
-                  Product Review
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/moderator/reported-contents"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <MdReport className="mr-2 text-lg" />
-                  Reported Contents
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/admin/statistics"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <MdAnalytics className="mr-2 text-lg" />
-                  Statistics
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/admin/manage-users"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <MdAdminPanelSettings className="mr-2 text-lg" />
-                  Manage Users
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/dashboard/admin/manage-coupons"
-                  className={({ isActive }) =>
-                    `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
-                      isActive ? "text-blue-600 bg-slate-100" : "text-slate-600"
-                    }`
-                  }
-                >
-                  <RiCoupon2Fill className="mr-2 text-lg" />
-                  Manage Coupons
-                </NavLink>
-              </li>
+              {role?.role === "admin" && (
+                <li>
+                  <NavLink
+                    to="/dashboard"
+                    end
+                    className={({ isActive }) =>
+                      `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                        isActive
+                          ? "text-blue-600 bg-slate-100"
+                          : "text-slate-600"
+                      }`
+                    }
+                  >
+                    <MdDashboard className="mr-2 text-lg" />
+                    Dashboard
+                  </NavLink>
+                </li>
+              )}
+
+              {role?.role === "user" && (
+                <>
+                  <li>
+                    <NavLink
+                      to="/dashboard/user/my-profile"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <FaUser className="mr-2 text-lg" />
+                      My Profile
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/user/add-product"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <IoMdAddCircle className="mr-2 text-lg" />
+                      Add Product
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/user/my-product"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <AiFillProduct className="mr-2 text-lg" />
+                      My Product
+                    </NavLink>
+                  </li>
+                </>
+              )}
+
+              {role?.role === "moderator" && (
+                <>
+                  <li>
+                    <NavLink
+                      to="/dashboard/user/my-profile"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <FaUser className="mr-2 text-lg" />
+                      My Profile
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/moderator/product-review"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <MdRateReview className="mr-2 text-lg" />
+                      Product Review
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/moderator/reported-contents"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <MdReport className="mr-2 text-lg" />
+                      Reported Contents
+                    </NavLink>
+                  </li>
+                </>
+              )}
+
+              {role?.role === "admin" && (
+                <>
+                  <li>
+                    <NavLink
+                      to="/dashboard/user/my-profile"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <FaUser className="mr-2 text-lg" />
+                      My Profile
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/admin/statistics"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <MdAnalytics className="mr-2 text-lg" />
+                      Statistics
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/admin/manage-users"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <MdAdminPanelSettings className="mr-2 text-lg" />
+                      Manage Users
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/admin/manage-coupons"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <RiCoupon2Fill className="mr-2 text-lg" />
+                      Manage Coupons
+                    </NavLink>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>

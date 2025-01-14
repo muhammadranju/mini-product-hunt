@@ -4,7 +4,9 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
+import Cookies from "js-cookie";
 import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -75,25 +77,25 @@ const Signup = () => {
         photoURL: photoURL,
       });
       setRefetch(Date.now());
-      console.log(userData);
+
       if (userData) {
-        // const returnData = await fetch(
-        //   `${import.meta.env.VITE_BackendURL}/api/auth/register`,
-        //   {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //       name: userData.user.displayName,
-        //       email: userData.user.email,
-        //       photoURL: userData.user.photoURL,
-        //     }),
-        //   }
-        // );
-        // const data = await returnData.json();
-        // Cookies.set("token", data?.token, { expires: 15 });
-        // console.log(data);
+        const returnData = await fetch(
+          `${import.meta.env.VITE_BackendURL}/api/auth/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: userData.user.displayName,
+              email: userData.user.email,
+              photoURL: userData.user.photoURL,
+            }),
+          }
+        );
+        const data = await returnData.json();
+        Cookies.set("token", data?.token, { expires: 15 });
+        console.log(data);
         navigate("/");
         setLoading(false);
         toast.success("User Created Successfully!");
@@ -105,35 +107,35 @@ const Signup = () => {
     }
   };
 
+  console.log(user);
+
   const handelGoogleSignup = async () => {
     const googleProvider = new GoogleAuthProvider();
     try {
       const googleUser = await signInWithPopup(auth, googleProvider);
-      const { displayName, email, photoURL } = googleUser.user; // Correct properties
+      const { displayName, email, photoURL } = googleUser.user;
       if (googleUser) {
-        // const userData = await fetch(
-        //   `${import.meta.env.VITE_BackendURL}/api/auth/register`,
-        //   {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //       name: displayName,
-        //       email: email,
-        //       photoURL: photoURL,
-        //     }),
-        //   }
-        // );
+        const userData = await fetch(
+          `${import.meta.env.VITE_BackendURL}/api/auth/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: displayName,
+              email: email,
+              photoURL: photoURL,
+            }),
+          }
+        );
 
-        // const user = await userData.json();
-        // console.log(user);
-        // Cookies.set("token", user?.token, { expires: 15 });
+        const user = await userData.json();
+        Cookies.set("token", user?.token, { expires: 15 });
         toast.success("User Registered Successfully!");
-
         navigate("/");
+        console.log(user);
       }
-      console.log(googleUser);
     } catch (error) {
       if (error.message.includes("auth/popup-closed-by-user")) {
         toast.error("Login Failed! Please try again.");
@@ -151,8 +153,8 @@ const Signup = () => {
         }}
       />
       <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
-        <p className="mt-3 text-2xl font-bold text-center text-gray-600 dark:text-gray-200">
-          Welcome back!
+        <p className="mt-3 text-lg font-bold text-center text-gray-600 dark:text-gray-200">
+          Create an account to start your journey
         </p>
         <button
           onClick={handelGoogleSignup}
@@ -282,7 +284,7 @@ const Signup = () => {
             to="/auth/login"
             className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline"
           >
-            or Sign In
+            already have an account?
           </Link>
           <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4" />
         </div>
