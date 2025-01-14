@@ -5,16 +5,24 @@ const ManageUsers = () => {
 
   useEffect(() => {
     // Fetch users (mocked here)
-    const fetchUsers = async () => {
-      // Replace with actual API call
-      const mockUsers = [
-        { id: 1, name: "John Doe", email: "john@example.com", role: "User" },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
-      ];
-      setUsers(mockUsers);
+    const fetchProducts = async () => {
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/users`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setUsers(data.data);
+      }
     };
 
-    fetchUsers();
+    fetchProducts();
   }, []);
 
   const handleMakeModerator = (userId) => {
@@ -45,16 +53,22 @@ const ManageUsers = () => {
         <table className="min-w-full bg-white">
           <thead>
             <tr>
+              <th className="py-2 px-4 border-b">User Image</th>
               <th className="py-2 px-4 border-b">User Name</th>
               <th className="py-2 px-4 border-b">User Email</th>
+              <th className="py-2 px-4 border-b">User Role</th>
               <th className="py-2 px-4 border-b text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
+                <td className="py-2 px-4 border-b">
+                  <img src={user.photoURL} className="w-12 h-12 rounded-md" />
+                </td>
                 <td className="py-2 px-4 border-b">{user.name}</td>
                 <td className="py-2 px-4 border-b">{user.email}</td>
+                <td className="py-2 px-4 border-b capitalize">{user.role}</td>
                 <td className="py-2 px-4 border-b text-center">
                   <button
                     className={`bg-blue-500 text-white py-1 px-3 rounded-lg mr-2 hover:bg-blue-700 ${

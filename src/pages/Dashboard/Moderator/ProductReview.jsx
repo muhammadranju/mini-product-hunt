@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 const ProductReview = () => {
   const [products, setProducts] = useState([]);
@@ -8,21 +8,26 @@ const ProductReview = () => {
   useEffect(() => {
     // Fetch all products for review (mocked here)
     const fetchProducts = async () => {
-      // Replace with actual API call
-      const mockProducts = [
-        { id: 1, name: "Product A", status: "Pending" },
-        { id: 2, name: "Product B", status: "Accepted" },
-        { id: 3, name: "Product C", status: "Pending" },
-      ];
-      // Sort products by status: Pending first
-      const sortedProducts = mockProducts.sort((a, b) =>
-        a.status === "Pending" ? -1 : 1
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products?all=true`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
-      setProducts(sortedProducts);
+      const data = await response.json();
+      console.log(data);
+      if (response.ok) {
+        setProducts(data.data);
+      }
     };
 
     fetchProducts();
   }, []);
+
+  console.log(products);
 
   const handleViewDetails = (productId) => {
     navigate(`/dashboard/moderator/product-details/${productId}`);
@@ -67,6 +72,9 @@ const ProductReview = () => {
             <thead className="">
               <tr>
                 <th className="py-4 px-6 text-left text-lg font-medium">
+                  Product Image
+                </th>
+                <th className="py-4 px-6 text-left text-lg font-medium">
                   Product Name
                 </th>
                 <th className="py-4 px-6 text-center text-lg font-medium">
@@ -78,22 +86,39 @@ const ProductReview = () => {
               {products.map((product) => (
                 <tr key={product.id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-6 text-gray-800 font-medium">
-                    {product.name}
+                    <img
+                      src={product.productImage}
+                      className="w-12 h-12 rounded-md"
+                    />
+                  </td>
+                  <td className="py-3 px-6 text-gray-800 font-medium capitalize">
+                    {product.productName}
                   </td>
                   <td className="py-3 px-6 text-center">
                     <div className="flex justify-center gap-2">
-                      <button
+                      <Link
                         className="bg-gray-600 text-white py-2 px-4 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
-                        onClick={() => handleViewDetails(product.id)}
+                        to={`/product/${product.slug}`}
                       >
                         View Details
-                      </button>
-                      <button
-                        className="bg-yellow-500 text-white py-2 px-4 rounded-md text-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-                        onClick={() => handleMakeFeatured(product.id)}
-                      >
-                        Make Featured
-                      </button>
+                      </Link>
+                      {product.featured ? (
+                        <button
+                          disabled
+                          className="bg-gray-500 text-white py-2 px-4 rounded-md text-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
+                          onClick={() => handleMakeFeatured(product.id)}
+                        >
+                          Make Featured
+                        </button>
+                      ) : (
+                        <button
+                          className="bg-yellow-500 text-white py-2 px-4 rounded-md text-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+                          onClick={() => handleMakeFeatured(product.id)}
+                        >
+                          Make Featured
+                        </button>
+                      )}
+
                       <button
                         className={`bg-green-500 text-white py-2 px-4 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition ${
                           product.status !== "Pending"
