@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "@/context/AuthProvider";
+import toast from "react-hot-toast";
 
 const ManageCoupons = () => {
   // Ensure `coupons` is always an array
@@ -11,12 +13,23 @@ const ManageCoupons = () => {
     discount: 0,
   });
 
+  const [updatedCoupon, setUpdatedCoupon] = useState({
+    code: "",
+    expiryDate: "",
+    description: "",
+    discount: 0,
+  });
+
+  const { setLoading } = useContext(AuthContext);
   // Fetch existing coupons from the server
   const fetchCoupons = async () => {
     try {
-      const response = await axios.get("/api/coupons"); // Replace with your actual API endpoint
-      if (Array.isArray(response.data)) {
-        setCoupons(response.data);
+      const response = await axios.get(
+        `${import.meta.env.VITE_BackendURL}/api/admin/coupons`
+      ); // Replace with your actual API endpoint
+
+      if (Array.isArray(response.data.data)) {
+        setCoupons(response.data.data);
       } else {
         console.error("Unexpected response format:", response.data);
         setCoupons([]); // Ensure `coupons` remains an array
@@ -31,9 +44,33 @@ const ManageCoupons = () => {
   const addCoupon = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/coupons", newCoupon); // Replace with your actual API endpoint
-      setCoupons([...coupons, response.data]);
-      setNewCoupon({ code: "", expiryDate: "", description: "", discount: 0 });
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/admin/coupons`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // Specify content type
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(newCoupon), // Send JSON stringified body
+        }
+      );
+
+      if (response.ok) {
+        setLoading(false);
+      }
+
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const responseData = await response.json(); // Parse JSON response
+      setCoupons([...coupons, responseData]); // Update state with new coupon
+      // setNewCoupon({ code: "", expiryDate: "", description: "", discount: 0 }); // Reset form
+
+      console.log("Coupon added successfully:", responseData);
     } catch (error) {
       console.error("Error adding coupon:", error);
     }
@@ -42,20 +79,90 @@ const ManageCoupons = () => {
   // Delete coupon
   const deleteCoupon = async (id) => {
     try {
-      await axios.delete(`/api/coupons/${id}`); // Replace with your actual API endpoint
-      setCoupons(coupons.filter((coupon) => coupon._id !== id));
+      swal({
+        title: "Are you sure?",
+        text: "You will make this user a moderator",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then(async (willModerator) => {
+        if (willModerator) {
+          await fetch(
+            `${import.meta.env.VITE_BackendURL}/api/admin/coupons/${id}`,
+            {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json", // Specify content type
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+
+          // await axios.delete(
+          //   `${import.meta.env.VITE_BackendURL}/api/admin/coupons/${id},`
+          // ); // Replace with your actual API endpoint
+          swal("User promoted to Moderator!", {
+            icon: "success",
+          });
+          setCoupons(coupons.filter((coupon) => coupon._id !== id));
+          toast.success("User promoted to Moderator!");
+        } else {
+          swal("User not promoted to Moderator!", {
+            icon: "error",
+          });
+        }
+      });
     } catch (error) {
       console.error("Error deleting coupon:", error);
     }
   };
 
   // Edit coupon (for simplicity, we only update description and discount)
+
+  console.log(updatedCoupon);
+  const handleEditCoupon = async (id) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/admin/coupons/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json", // Specify content type
+          },
+        }
+      );
+
+      const data = await response.json();
+      setUpdatedCoupon(data?.data);
+      console.log(data);
+      if (response.ok) {
+        setLoading(false);
+      }
+      document.getElementById("editCoupon").showModal();
+    } catch (error) {
+      console.error("Error editing coupon:", error);
+    }
+  };
   const editCoupon = async (id, updatedCoupon) => {
     try {
-      const response = await axios.put(`/api/coupons/${id}`, updatedCoupon); // Replace with your actual API endpoint
-      setCoupons(
-        coupons.map((coupon) => (coupon._id === id ? response.data : coupon))
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/admin/coupons/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json", // Specify content type
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(updatedCoupon), // Send JSON stringified body
+        }
       );
+
+      if (response.ok) {
+        setLoading(false);
+      }
+
+      document.getElementById("editCoupon").close();
     } catch (error) {
       console.error("Error editing coupon:", error);
     }
@@ -67,7 +174,7 @@ const ManageCoupons = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto">
-      <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
+      <div className="w-11/12 mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Manage Coupons
         </h2>
@@ -86,16 +193,7 @@ const ManageCoupons = () => {
               }
               required
             />
-            <input
-              type="date"
-              placeholder="Expiry Date"
-              className="p-2 border border-gray-300 rounded w-full"
-              value={newCoupon?.expiryDate}
-              onChange={(e) =>
-                setNewCoupon({ ...newCoupon, expiryDate: e.target.value })
-              }
-              required
-            />
+
             <input
               type="text"
               placeholder="Description"
@@ -106,16 +204,28 @@ const ManageCoupons = () => {
               }
               required
             />
-            <input
-              type="number"
-              placeholder="Discount Amount"
-              className="p-2 border border-gray-300 rounded w-full"
-              value={newCoupon?.discount}
-              onChange={(e) =>
-                setNewCoupon({ ...newCoupon, discount: e.target.value })
-              }
-              required
-            />
+            <div className="flex flex-row justify-between gap-x-5 items-center gap-y-4">
+              <input
+                type="number"
+                placeholder="Discount Amount"
+                className="p-2 border border-gray-300 rounded w-full"
+                value={newCoupon?.discount}
+                onChange={(e) =>
+                  setNewCoupon({ ...newCoupon, discount: e.target.value })
+                }
+                required
+              />
+              <input
+                type="date"
+                placeholder="Expiry Date"
+                className="p-2 border border-gray-300 rounded w-full"
+                value={newCoupon?.expiryDate}
+                onChange={(e) =>
+                  setNewCoupon({ ...newCoupon, expiryDate: e.target.value })
+                }
+                required
+              />
+            </div>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded"
@@ -128,7 +238,7 @@ const ManageCoupons = () => {
         {/* Coupons Table */}
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">All Coupons</h3>
-          {Array.isArray(coupons) && coupons.length === 0 ? (
+          {Array.isArray(coupons) && coupons?.length === 0 ? (
             <p>No coupons found.</p>
           ) : (
             <div className="overflow-x-auto">
@@ -143,30 +253,31 @@ const ManageCoupons = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {Array.isArray(coupons) &&
-                    coupons.map((coupon) => (
-                      <tr key={coupon._id}>
-                        <td className="border p-2">{coupon.code}</td>
+                  {Array?.isArray(coupons) &&
+                    coupons?.map((coupon) => (
+                      <tr key={coupon?._id}>
+                        <td className="border p-2">{coupon?.code}</td>
                         <td className="border p-2">
-                          {new Date(coupon.expiryDate).toLocaleDateString()}
+                          {new Date(coupon?.expiryDate).toLocaleDateString()}
                         </td>
-                        <td className="border p-2">{coupon.description}</td>
-                        <td className="border p-2">{coupon.discount}%</td>
+                        <td className="border p-2">{coupon?.description}</td>
+                        <td className="border p-2">{coupon?.discount}%</td>
                         <td className="border p-2">
                           <button
-                            onClick={() =>
-                              editCoupon(coupon._id, {
-                                ...coupon,
-                                description: "Updated Description",
-                                discount: coupon.discount + 5,
-                              })
-                            }
+                            // onClick={() =>
+                            //   editCoupon(coupon?._id, {
+                            //     ...coupon,
+                            //     description: "Updated Description",
+                            //     discount: coupon?.discount + 5,
+                            //   })
+                            // }
+                            onClick={() => handleEditCoupon(coupon?._id)}
                             className="text-blue-500 hover:text-blue-700 mr-2"
                           >
                             Edit
                           </button>
                           <button
-                            onClick={() => deleteCoupon(coupon._id)}
+                            onClick={() => deleteCoupon(coupon?._id)}
                             className="text-red-500 hover:text-red-700"
                           >
                             Delete
@@ -180,6 +291,82 @@ const ManageCoupons = () => {
           )}
         </div>
       </div>
+
+      <dialog id="editCoupon" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Update!</h3>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Coupon Code
+            </label>
+            <input
+              type="text"
+              placeholder="Coupon Code"
+              className="p-2 border border-gray-300 rounded w-full"
+              value={updatedCoupon?.code}
+              onChange={(e) =>
+                setUpdatedCoupon({ ...updatedCoupon, code: e.target.value })
+              }
+              required
+            />
+
+            <input
+              type="text"
+              placeholder="Description"
+              className="p-2 border border-gray-300 rounded w-full"
+              value={updatedCoupon?.description}
+              onChange={(e) =>
+                setUpdatedCoupon({
+                  ...updatedCoupon,
+                  description: e.target.value,
+                })
+              }
+              required
+            />
+            <div className="flex flex-row justify-between gap-x-5 items-center gap-y-4">
+              <input
+                type="number"
+                placeholder="Discount Amount"
+                className="p-2 border border-gray-300 rounded w-full"
+                value={updatedCoupon?.discount}
+                onChange={(e) =>
+                  setUpdatedCoupon({
+                    ...updatedCoupon,
+                    discount: e.target.value,
+                  })
+                }
+                required
+              />
+              <input
+                type="date"
+                placeholder="Expiry Date"
+                className="p-2 border border-gray-300 rounded w-full"
+                value={updatedCoupon?.expiryDate}
+                onChange={(e) =>
+                  setUpdatedCoupon({
+                    ...updatedCoupon,
+                    expiryDate: e.target.value,
+                  })
+                }
+                required
+              />
+            </div>
+            <button
+              onClick={() => editCoupon(updatedCoupon._id, updatedCoupon)}
+              type="submit"
+              className="px-4 py-2 w-full bg-blue-600 text-white rounded"
+            >
+              Update Coupon
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   );
 };
