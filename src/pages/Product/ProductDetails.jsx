@@ -1,12 +1,14 @@
 import { AuthContext } from "@/context/AuthProvider";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 const ProductDetails = ({ reviews }) => {
   const handleReviewSubmit = async (e) => {};
   const [product, setProducts] = useState([]);
   const { user } = useContext(AuthContext);
+  const navBack = useNavigate();
 
   const { id } = useParams();
 
@@ -33,14 +35,21 @@ const ProductDetails = ({ reviews }) => {
         <div className="w-11/12 max-w-5xl mx-auto bg-white p-8 shadow-lg rounded-lg">
           {/* Product Details Section */}
           <div className="mb-8">
-            <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-              {product?.productName}
-            </h2>
+            <button
+              onClick={() => navBack(-1)}
+              className="flex items-center p-2 px-3 bg-slate-800 rounded-2xl font-semibold text-gray-100 mb-4"
+            >
+              <IoMdArrowRoundBack />
+              Back
+            </button>
             <img
               src={product?.productImage}
               alt={product?.productName}
               className="w-full h-auto rounded-md mb-4"
             />
+            <h2 className="text-3xl capitalize font-semibold text-gray-800 mb-4">
+              {product?.productName}
+            </h2>
             <p className="text-gray-700 text-lg mb-4">{product?.description}</p>
             <div className="flex items-center gap-4 mb-6">
               {/* <span className="bg-blue-100 text-blue-800 py-1 px-3 rounded-full text-sm">
