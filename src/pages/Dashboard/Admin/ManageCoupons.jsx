@@ -81,7 +81,7 @@ const ManageCoupons = () => {
     try {
       swal({
         title: "Are you sure?",
-        text: "You will make this user a moderator",
+        text: "Do want to delete this coupon?",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -97,17 +97,13 @@ const ManageCoupons = () => {
               },
             }
           );
-
-          // await axios.delete(
-          //   `${import.meta.env.VITE_BackendURL}/api/admin/coupons/${id},`
-          // ); // Replace with your actual API endpoint
-          swal("User promoted to Moderator!", {
+          swal("Coupon deleted!", {
             icon: "success",
           });
           setCoupons(coupons.filter((coupon) => coupon._id !== id));
-          toast.success("User promoted to Moderator!");
+          toast.success("Coupon deleted!");
         } else {
-          swal("User not promoted to Moderator!", {
+          swal("Coupon not deleted!", {
             icon: "error",
           });
         }
@@ -118,8 +114,6 @@ const ManageCoupons = () => {
   };
 
   // Edit coupon (for simplicity, we only update description and discount)
-
-  console.log(updatedCoupon);
   const handleEditCoupon = async (id) => {
     try {
       const response = await fetch(
@@ -143,6 +137,7 @@ const ManageCoupons = () => {
       console.error("Error editing coupon:", error);
     }
   };
+
   const editCoupon = async (id, updatedCoupon) => {
     try {
       setLoading(true);

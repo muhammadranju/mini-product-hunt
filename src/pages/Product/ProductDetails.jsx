@@ -3,13 +3,15 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { FaChevronUp } from "react-icons/fa";
+import { FaChevronUp, FaCommentDots, FaRegCommentDots } from "react-icons/fa";
 import toast from "react-hot-toast";
 import useRole from "@/hooks/useRole";
+import ReactStars from "react-rating-stars-component";
 
 const ProductDetails = () => {
   const [product, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [reason, setReason] = useState("");
   const { user, setLoading } = useContext(AuthContext);
   const [isLiked, setIsLiked] = useState(false);
   const [role] = useRole();
@@ -118,10 +120,46 @@ const ProductDetails = () => {
     console.log(data);
   };
 
+  const handleReportReason = (response) => {
+    document.getElementById("reportModal").showModal();
+    setReason(response.target.value);
+  };
+
+  const handleReport = async (productId) => {
+    // if (reason === "") {
+    //   toast.error("Please provide a reason for reporting the product.");
+    //   return;
+    // }
+
+    const response = await fetch(
+      `${import.meta.env.VITE_BackendURL}/api/products/report/${productId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          productId: productId,
+          reporterEmail: user.email,
+          reason: reason,
+        }),
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    if (response.ok) {
+      toast.success("Product reported successfully!");
+      document.getElementById("reportModal").close();
+    }
+    console.log(productId);
+    console.log(reason);
+  };
+
   return (
-    <div className="w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto  mb-10">
-      <div className="min-h-screen py-10">
-        <div className="w-11/12 max-w-5xl mx-auto bg-white p-8 shadow-lg rounded-lg">
+    <div className="w-11/12 md:w-11/12 lg:w-11/12  xl:container mx-auto  mb-10">
+      <div className="min-h-screen mt-10">
+        <div className="w-11/12  mx-auto bg-white p-8 shadow-lg rounded-lg">
           {/* Product Details Section */}
           <div className="mb-8">
             <button
@@ -153,7 +191,7 @@ const ProductDetails = () => {
               </div>
 
               <a
-                href={product?.externalLink}
+                href={product?.externalLinks}
                 target="_blank"
                 className="text-blue-500 hover:underline flex items-center gap-2"
               >
@@ -180,111 +218,156 @@ const ProductDetails = () => {
               </button>
               <button
                 className="bg-red-500 text-white py-2 px-6 rounded-lg text-sm hover:bg-red-600 transition"
-                onClick={() => handleReport(product?.id)}
+                onClick={handleReportReason}
               >
                 Report
               </button>
             </div>
           </div>
 
-          {/* Post Review Section */}
-          <div>
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Post a Review
-            </h3>
-            <form onSubmit={handelReviewSubmit} className="space-y-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src={user?.photoURL}
-                  alt={user?.displayName}
-                  className="w-12 h-12 rounded-full"
-                />
-                <div>
-                  <p className="text-gray-800 font-medium">
-                    {user?.displayName}
-                  </p>
-                  <input
-                    type="hidden"
-                    value={user?.displayName}
-                    name="reviewerName"
-                  />
-                  <input
-                    type="hidden"
-                    value={"userImage"}
-                    name="reviewerImage"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Review Description
-                </label>
-                <textarea
-                  name="reviewDescription"
-                  className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-                  rows="4"
-                  required
-                ></textarea>
-              </div>
-              <div>
-                <label className="block text-gray-700 font-medium mb-1">
-                  Rating
-                </label>
-                <select
-                  name="rating"
-                  className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
-                  required
-                >
-                  <option value="">Select a Rating</option>
-                  <option value="1">1 Star</option>
-                  <option value="2">2 Stars</option>
-                  <option value="3">3 Stars</option>
-                  <option value="4">4 Stars</option>
-                  <option value="5">5 Stars</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-6 rounded-lg text-sm hover:bg-blue-600 transition"
-              >
-                Submit Review
-              </button>
-            </form>
-          </div>
-
-          {/* Reviews Section */}
-          <div className="mb-8">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Reviews
-            </h3>
-            <div className="space-y-4">
-              {reviews?.map((review) => (
-                <div
-                  key={review?._id}
-                  className="p-4 bg-gray-50 rounded-lg shadow"
-                >
-                  <div className="flex items-center gap-4 mb-2">
-                    <img
-                      src={review?.reviewer?.image}
-                      alt={review?.reviewer?.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div>
-                      <h4 className="text-gray-800 font-medium">
-                        {review?.reviewer?.name}
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        {review?.rating} Stars
-                      </p>
+          <div className="flex lg:flex-row flex-col-reverse  justify-center gap-5">
+            {/* Reviews Section */}
+            <div className=" lg:w-[65%]">
+              <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+                Reviews
+              </h3>
+              <div className="space-y-4">
+                {reviews?.map((review) => (
+                  <div
+                    key={review?._id}
+                    className="p-4 bg-gray-50 rounded-lg shadow"
+                  >
+                    <div className="flex items-center gap-4 mb-2">
+                      <img
+                        src={review?.reviewer?.image}
+                        alt={review?.reviewer?.name}
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <div>
+                        <h4 className="text-gray-800 font-medium">
+                          {review?.reviewer?.name}
+                        </h4>
+                        <p className="text-sm text-gray-500 flex items-center gap-x-2">
+                          <ReactStars
+                            count={review?.rating}
+                            // onChange={ratingChanged}
+                            size={24}
+                            edit={false}
+                            activeColor="#ffd700"
+                            color={"#ffd700"}
+                          />
+                        </p>
+                        <span className="text-gray-500 text-sm  ">
+                          {new Date(review?.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
+                    <p className="text-gray-700">{review?.reviewText}</p>
                   </div>
-                  <p className="text-gray-700">{review?.reviewText}</p>
+                ))}
+              </div>
+            </div>
+            {/* Post Review Section */}
+            <div className="lg:w-[35%]">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Post a Review
+              </h3>
+              <form onSubmit={handelReviewSubmit} className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <img
+                    src={user?.photoURL}
+                    alt={user?.displayName}
+                    className="w-12 h-12 rounded-full"
+                  />
+                  <div>
+                    <p className="text-gray-800 font-medium">
+                      {user?.displayName}
+                    </p>
+                    <input
+                      type="hidden"
+                      value={user?.displayName}
+                      name="reviewerName"
+                    />
+                    <input
+                      type="hidden"
+                      value={"userImage"}
+                      name="reviewerImage"
+                    />
+                  </div>
                 </div>
-              ))}
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">
+                    Review Description
+                  </label>
+                  <textarea
+                    name="reviewDescription"
+                    className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                    rows="4"
+                    required
+                  ></textarea>
+                </div>
+                <div>
+                  <label className="block text-gray-700 font-medium mb-1">
+                    Rating
+                  </label>
+                  <select
+                    name="rating"
+                    className="w-full p-3 border rounded-lg shadow-sm focus:ring focus:ring-blue-300"
+                    required
+                  >
+                    <option value="">Select a Rating</option>
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5">5 Stars</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-slate-800 w-full flex items-center gap-x-2 text-center justify-center  text-white py-3 px-6 rounded-lg  hover:bg-slate-700 transition"
+                >
+                  Post Review <FaRegCommentDots />
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
+
+      <dialog id="reportModal" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <h3 className="font-bold text-lg">Report Product</h3>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Reason
+            </label>
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Reason"
+              required
+            />
+            <small className="text-red-500 font-semibold">
+              {reason === "" ? "Please provide a reason." : ""}
+            </small>
+          </div>
+          <button
+            type="submit"
+            onClick={() => handleReport(product?._id)}
+            className="px-4 py-2 w-full mt-2 bg-blue-600 text-white rounded"
+          >
+            Report Product
+          </button>
+        </div>
+      </dialog>
     </div>
   );
 };

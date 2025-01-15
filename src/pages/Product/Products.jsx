@@ -5,14 +5,15 @@ const Products = () => {
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(6);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
-        }/api/products?page=${currentPage}&limit=${limit}`,
+        }/api/products?page=${currentPage}&limit=${limit}&search=${search}`,
         {
           method: "GET",
         }
@@ -25,7 +26,7 @@ const Products = () => {
       }
     };
     fetchProducts();
-  }, [currentPage, limit]);
+  }, [currentPage, limit, search]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -41,7 +42,7 @@ const Products = () => {
 
   return (
     <>
-      <div className="w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto my-20">
+      <div className="w-11/12 md:w-11/12  lg:w-11/12 xl:container mx-auto my-20">
         <div className="max-w-[40%] mx-auto my-2">
           <label
             htmlFor="username"
@@ -53,9 +54,16 @@ const Products = () => {
             type="text"
             placeholder="Search your product with tags..."
             className="block mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-
+        {products?.length === 0 && (
+          <div className="flex justify-center items-center my-64">
+            <p className="text-center flex text-5xl font-semibold items-center justify-center text-gray-800 dark:text-gray-300">
+              No products found.
+            </p>
+          </div>
+        )}
         <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-16">
           {products?.reverse()?.map((product) => (
             <Cards key={product._id} product={product} />
