@@ -11,6 +11,7 @@ const ProductDetails = () => {
   const [product, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
   const { user, setLoading } = useContext(AuthContext);
+  const [isLiked, setIsLiked] = useState(false);
   const [role] = useRole();
   // console.log(role.user.email);
   const navigate = useNavigate();
@@ -77,7 +78,6 @@ const ProductDetails = () => {
     }
     setLoading(false);
   };
-
   const handleUpvote = async (productId, ownerId) => {
     if (!user) {
       navigate("/auth/login");
@@ -87,7 +87,35 @@ const ProductDetails = () => {
       alert("You cannot upvote your own product.");
       return;
     }
-    console.log(productId);
+
+    const response = await fetch(
+      `${import.meta.env.VITE_BackendURL}/api/products/${productId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          upvotes: product?.upvotes + 1,
+          productId: product?._id,
+          userEmail: role?.user?.email,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    if (data.status === 200 || data.message.includes("Upvote successful")) {
+      setIsLiked(true);
+      toast.success("Upvote successful");
+    }
+    if (
+      data.status === 400 ||
+      data.message.includes("You already upvoted this product")
+    ) {
+      toast.error("You already upvoted this product");
+    }
+    console.log(data);
   };
 
   return (
@@ -139,13 +167,16 @@ const ProductDetails = () => {
                 className={`bg-slate-800 flex items-center text-white py-2 px-3 rounded-lg text-sm hover:bg-slate-700 transition  ${
                   user && role?.user?.email === product?.owner?.ownerEmail
                     ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-blue-600"
+                    : "hover:bg-slate-600"
                 }`}
                 onClick={() =>
                   handleUpvote(product?._id, product?.owner?.ownerEmail)
                 }
               >
-                <FaChevronUp className="mr-1" /> Upvote ({product?.upvotes})
+                <FaChevronUp className="mr-1" />{" "}
+                {isLiked
+                  ? `Upvote ${product?.upvotes + 1}`
+                  : `  Upvote ${product?.upvotes}`}
               </button>
               <button
                 className="bg-red-500 text-white py-2 px-6 rounded-lg text-sm hover:bg-red-600 transition"
