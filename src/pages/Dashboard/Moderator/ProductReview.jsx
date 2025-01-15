@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { LuPin } from "react-icons/lu";
+import { AuthContext } from "@/context/AuthProvider";
 const ProductReview = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { setLoading } = useContext(AuthContext);
 
   useEffect(() => {
     // Fetch all products for review (mocked here)
@@ -33,10 +36,72 @@ const ProductReview = () => {
     navigate(`/dashboard/moderator/product-details/${productId}`);
   };
 
-  const handleMakeFeatured = (productId) => {
-    // Update product to be featured (mock action)
-    toast.success("Product marked as featured!");
-    // Add actual API call here
+  const handleMakeFeatured = async (productId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products/${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json", // Added Content-Type header
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            featured: true,
+          }),
+        }
+      );
+      if (response.ok) {
+        setLoading(false);
+      }
+      if (!response.ok) {
+        setLoading(false);
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      toast.success("Product marked as featured!");
+    } catch (error) {
+      console.error("Error marking product as featured:", error);
+      toast.error("Failed to mark product as featured. Please try again.");
+    }
+  };
+
+  const handleRemoveFeatured = async (productId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products/${productId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json", // Added Content-Type header
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            featured: false,
+          }),
+        }
+      );
+      if (response.ok) {
+        setLoading(false);
+      }
+      if (!response.ok) {
+        setLoading(false);
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      toast.success("Product marked as featured!");
+    } catch (error) {
+      console.error("Error marking product as featured:", error);
+      toast.error("Failed to mark product as featured. Please try again.");
+    }
   };
 
   const handleAccept = (productId) => {
@@ -77,14 +142,17 @@ const ProductReview = () => {
                 <th className="py-4 px-6 text-left text-lg font-medium">
                   Product Name
                 </th>
+                <th className="py-4 px-6 text-left text-lg font-medium">
+                  Status
+                </th>
                 <th className="py-4 px-6 text-center text-lg font-medium">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
-                <tr key={product.id} className="border-b hover:bg-gray-50">
+              {products?.map((product) => (
+                <tr key={product._id} className="border-b hover:bg-gray-50">
                   <td className="py-3 px-6 text-gray-800 font-medium">
                     <img
                       src={product.productImage}
@@ -94,28 +162,30 @@ const ProductReview = () => {
                   <td className="py-3 px-6 text-gray-800 font-medium capitalize">
                     {product.productName}
                   </td>
+                  <td className="py-3 px-6 text-gray-800 font-medium capitalize">
+                    {product.status}
+                  </td>
                   <td className="py-3 px-6 text-center">
                     <div className="flex justify-center gap-2">
                       <Link
                         className="bg-gray-600 text-white py-2 px-4 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
                         to={`/product/${product.slug}`}
                       >
-                        View Details
+                        View
                       </Link>
                       {product.featured ? (
                         <button
-                          disabled
-                          className="bg-gray-500 text-white py-2 px-4 rounded-md text-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
-                          onClick={() => handleMakeFeatured(product.id)}
+                          className="bg-green-500 flex items-center font-bold gap-x-1 text-white py-2 px-4 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+                          onClick={() => handleRemoveFeatured(product._id)}
                         >
-                          Make Featured
+                          Remove <LuPin />
                         </button>
                       ) : (
                         <button
                           className="bg-yellow-500 text-white py-2 px-4 rounded-md text-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-                          onClick={() => handleMakeFeatured(product.id)}
+                          onClick={() => handleMakeFeatured(product._id)}
                         >
-                          Make Featured
+                          Featured
                         </button>
                       )}
 
