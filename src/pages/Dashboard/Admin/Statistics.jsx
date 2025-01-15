@@ -20,13 +20,39 @@ const Statistics = () => {
 
   useEffect(() => {
     // Fetching mock data for statistics (replace with actual API call)
+
     const fetchStatistics = async () => {
       const mockData = {
         totalProducts: { accepted: 120, pending: 40, all: 160 },
         totalReviews: 320,
         totalUsers: 250,
       };
-      setStatistics(mockData);
+      // setStatistics(mockData);
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/products/statistics`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log(data.data);
+      const chartData = {
+        totalProducts: {
+          accepted: data.data.products.accepted,
+          pending: data.data.products.pending,
+          all: data.data.products.total,
+        },
+        totalReviews: data.data.reviews,
+        totalUsers: data.data.users.total,
+      };
+      setStatistics(chartData);
+      if (response.ok) {
+        setUsers(data.data);
+      }
     };
 
     fetchStatistics();
