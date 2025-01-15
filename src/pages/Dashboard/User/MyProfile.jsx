@@ -18,33 +18,33 @@ const MyProfile = () => {
 
   const isSubscribed = role?.user?.subscription;
   return (
-    <div className="ml-0 md:ml-64 py-16  h-screen overflow-auto pt-36 bg-gray-50">
-      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+    <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto pt-36 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-2xl rounded-lg">
         <div className="flex flex-col items-center">
           <img
             src={user?.photoURL}
             alt={user?.displayName}
-            className="w-32 h-32 rounded-full shadow-md"
+            className="w-32 h-32 rounded-full shadow-lg border-4 border-indigo-500"
           />
-          <h2 className="text-xl font-semibold mt-4">{user?.displayName}</h2>
-          <p className="text-gray-600">{user?.email}</p>
-          {role?.role === "admin" || role?.role === "moderator" ? (
-            ""
-          ) : (
+          <h2 className="text-2xl font-bold mt-4 text-gray-800">
+            {user?.displayName}
+          </h2>
+          <p className="text-gray-500">{user?.email}</p>
+          {role?.role === "admin" || role?.role === "moderator" ? null : (
             <>
               {!isSubscribed ? (
                 <button
                   onClick={handleSubscribe}
-                  className="mt-6 text-center px-4 py-3 flex items-center justify-center text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-slate-800 rounded-lg hover:bg-slate-700 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+                  className="mt-6 w-full text-center px-5 py-3 text-base font-medium tracking-wide text-white bg-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300"
                 >
                   Subscribe for $9.99
                 </button>
               ) : (
-                <div className="mt-6 flex items-center gap-x-2">
-                  <p className="text-green-600 font-semibold">
+                <div className="mt-6 flex items-center gap-x-3">
+                  <p className="text-green-600 font-semibold text-lg">
                     Membership Status:
                   </p>
-                  <p className="text-gray-900 p-3 bg-green-500 rounded-lg ">
+                  <p className="text-white px-4 py-2 bg-green-600 rounded-full">
                     Verified
                   </p>
                 </div>

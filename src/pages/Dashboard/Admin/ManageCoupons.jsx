@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 const ManageCoupons = () => {
+  // Ensure `coupons` is always an array
   const [coupons, setCoupons] = useState([]);
   const [newCoupon, setNewCoupon] = useState({
     code: "",
@@ -13,9 +15,15 @@ const ManageCoupons = () => {
   const fetchCoupons = async () => {
     try {
       const response = await axios.get("/api/coupons"); // Replace with your actual API endpoint
-      setCoupons(response.data);
+      if (Array.isArray(response.data)) {
+        setCoupons(response.data);
+      } else {
+        console.error("Unexpected response format:", response.data);
+        setCoupons([]); // Ensure `coupons` remains an array
+      }
     } catch (error) {
       console.error("Error fetching coupons:", error);
+      setCoupons([]); // Fallback to empty array on error
     }
   };
 
@@ -56,6 +64,7 @@ const ManageCoupons = () => {
   useEffect(() => {
     fetchCoupons();
   }, []);
+
   return (
     <div className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto">
       <div className="max-w-6xl mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
@@ -119,7 +128,7 @@ const ManageCoupons = () => {
         {/* Coupons Table */}
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">All Coupons</h3>
-          {coupons?.length === 0 ? (
+          {Array.isArray(coupons) && coupons.length === 0 ? (
             <p>No coupons found.</p>
           ) : (
             <div className="overflow-x-auto">
@@ -134,36 +143,37 @@ const ManageCoupons = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {coupons?.map((coupon) => (
-                    <tr key={coupon._id}>
-                      <td className="border p-2">{coupon.code}</td>
-                      <td className="border p-2">
-                        {new Date(coupon.expiryDate).toLocaleDateString()}
-                      </td>
-                      <td className="border p-2">{coupon.description}</td>
-                      <td className="border p-2">{coupon.discount}%</td>
-                      <td className="border p-2">
-                        <button
-                          onClick={() =>
-                            editCoupon(coupon._id, {
-                              ...coupon,
-                              description: "Updated Description", // Example updated data
-                              discount: coupon.discount + 5, // Example updated discount
-                            })
-                          }
-                          className="text-blue-500 hover:text-blue-700 mr-2"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => deleteCoupon(coupon._id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {Array.isArray(coupons) &&
+                    coupons.map((coupon) => (
+                      <tr key={coupon._id}>
+                        <td className="border p-2">{coupon.code}</td>
+                        <td className="border p-2">
+                          {new Date(coupon.expiryDate).toLocaleDateString()}
+                        </td>
+                        <td className="border p-2">{coupon.description}</td>
+                        <td className="border p-2">{coupon.discount}%</td>
+                        <td className="border p-2">
+                          <button
+                            onClick={() =>
+                              editCoupon(coupon._id, {
+                                ...coupon,
+                                description: "Updated Description",
+                                discount: coupon.discount + 5,
+                              })
+                            }
+                            className="text-blue-500 hover:text-blue-700 mr-2"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => deleteCoupon(coupon._id)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
