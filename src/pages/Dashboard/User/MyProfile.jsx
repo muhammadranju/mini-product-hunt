@@ -30,6 +30,9 @@ const MyProfile = () => {
             {user?.displayName}
           </h2>
           <p className="text-gray-500">{user?.email}</p>
+          <p className="text-gray-800 font-semibold capitalize">
+            Role: {role?.user?.role}
+          </p>
           {role?.role === "admin" || role?.role === "moderator" ? null : (
             <>
               {!isSubscribed ? (

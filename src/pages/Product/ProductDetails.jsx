@@ -3,12 +3,17 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LuExternalLink } from "react-icons/lu";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { FaChevronUp } from "react-icons/fa";
+import toast from "react-hot-toast";
+import useRole from "@/hooks/useRole";
 
-const ProductDetails = ({ reviews }) => {
-  const handleReviewSubmit = async (e) => {};
+const ProductDetails = () => {
   const [product, setProducts] = useState([]);
-  const { user } = useContext(AuthContext);
-  const navBack = useNavigate();
+  const [reviews, setReviews] = useState([]);
+  const { user, setLoading } = useContext(AuthContext);
+  const [role] = useRole();
+  // console.log(role.user.email);
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -21,13 +26,69 @@ const ProductDetails = ({ reviews }) => {
         }
       );
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         setProducts(data.data);
       }
     };
     fetchProducts();
   }, []);
+
+  useEffect(() => {
+    async function getReviews() {
+      const reviewResponse = await fetch(
+        `${import.meta.env.VITE_BackendURL}/api/reviews/${product?._id}`
+      );
+
+      const reviewData = await reviewResponse.json();
+      setReviews(reviewData.data);
+    }
+    getReviews();
+  }, [product]);
+
+  const handelReviewSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const reviewDescription = e.target.reviewDescription.value;
+    const rating = Number(e.target.rating.value);
+
+    const response = await fetch(
+      `${import.meta.env.VITE_BackendURL}/api/reviews`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          reviewText: reviewDescription,
+          rating,
+          productId: product?._id,
+          name: user.displayName,
+          image: user?.photoURL,
+          email: user?.email,
+        }),
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    if (response.ok) {
+      setLoading(false);
+      toast.success("Review submitted successfully!");
+    }
+    setLoading(false);
+  };
+
+  const handleUpvote = async (productId, ownerId) => {
+    if (!user) {
+      navigate("/auth/login");
+      return;
+    }
+    if (role?.user?.email === ownerId) {
+      alert("You cannot upvote your own product.");
+      return;
+    }
+    console.log(productId);
+  };
 
   return (
     <div className="w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto  mb-10">
@@ -36,7 +97,7 @@ const ProductDetails = ({ reviews }) => {
           {/* Product Details Section */}
           <div className="mb-8">
             <button
-              onClick={() => navBack(-1)}
+              onClick={() => navigate(-1)}
               className="flex items-center p-2 px-3 bg-slate-800 rounded-2xl font-semibold text-gray-100 mb-4"
             >
               <IoMdArrowRoundBack />
@@ -74,10 +135,17 @@ const ProductDetails = ({ reviews }) => {
             </div>
             <div className="flex items-center gap-4">
               <button
-                className="bg-green-500 text-white py-2 px-6 rounded-lg text-sm hover:bg-green-600 transition"
-                onClick={() => handleUpvote(product?.id)}
+                disabled={role?.user?.email === product?.owner?.ownerEmail}
+                className={`bg-slate-800 flex items-center text-white py-2 px-3 rounded-lg text-sm hover:bg-slate-700 transition  ${
+                  user && role?.user?.email === product?.owner?.ownerEmail
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-blue-600"
+                }`}
+                onClick={() =>
+                  handleUpvote(product?._id, product?.owner?.ownerEmail)
+                }
               >
-                Upvote ({product?.upvotes})
+                <FaChevronUp className="mr-1" /> Upvote ({product?.upvotes})
               </button>
               <button
                 className="bg-red-500 text-white py-2 px-6 rounded-lg text-sm hover:bg-red-600 transition"
@@ -88,44 +156,12 @@ const ProductDetails = ({ reviews }) => {
             </div>
           </div>
 
-          {/* Reviews Section */}
-          <div className="mb-8">
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-              Reviews
-            </h3>
-            <div className="space-y-4">
-              {reviews?.map((review) => (
-                <div
-                  key={review?.id}
-                  className="p-4 bg-gray-50 rounded-lg shadow"
-                >
-                  <div className="flex items-center gap-4 mb-2">
-                    <img
-                      src={review?.reviewerImage}
-                      alt={review?.reviewerName}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <div>
-                      <h4 className="text-gray-800 font-medium">
-                        {review?.reviewerName}
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        {review?.rating} Stars
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700">{review?.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Post Review Section */}
           <div>
             <h3 className="text-2xl font-semibold text-gray-800 mb-4">
               Post a Review
             </h3>
-            <form onSubmit={handleReviewSubmit} className="space-y-4">
+            <form onSubmit={handelReviewSubmit} className="space-y-4">
               <div className="flex items-center gap-4">
                 <img
                   src={user?.photoURL}
@@ -183,6 +219,38 @@ const ProductDetails = ({ reviews }) => {
                 Submit Review
               </button>
             </form>
+          </div>
+
+          {/* Reviews Section */}
+          <div className="mb-8">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+              Reviews
+            </h3>
+            <div className="space-y-4">
+              {reviews?.map((review) => (
+                <div
+                  key={review?._id}
+                  className="p-4 bg-gray-50 rounded-lg shadow"
+                >
+                  <div className="flex items-center gap-4 mb-2">
+                    <img
+                      src={review?.reviewer?.image}
+                      alt={review?.reviewer?.name}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <div>
+                      <h4 className="text-gray-800 font-medium">
+                        {review?.reviewer?.name}
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        {review?.rating} Stars
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700">{review?.reviewText}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

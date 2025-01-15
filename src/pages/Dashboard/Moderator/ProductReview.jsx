@@ -5,6 +5,11 @@ import { LuPin } from "react-icons/lu";
 import { AuthContext } from "@/context/AuthProvider";
 const ProductReview = () => {
   const [products, setProducts] = useState([]);
+  const [openDropdown, setOpenDropdown] = useState(null);
+
+  const toggleDropdown = (productId) => {
+    setOpenDropdown(openDropdown === productId ? null : productId);
+  };
   const navigate = useNavigate();
   const { setLoading } = useContext(AuthContext);
 
@@ -21,7 +26,7 @@ const ProductReview = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
+
       if (response.ok) {
         setProducts(data.data);
       }
@@ -30,40 +35,50 @@ const ProductReview = () => {
     fetchProducts();
   }, []);
 
-  console.log(products);
-
   const handleViewDetails = (productId) => {
     navigate(`/dashboard/moderator/product-details/${productId}`);
   };
 
-  const handleMakeFeatured = async (productId) => {
+  const handelUpdateStatus = async (productId, status, value) => {
+    setLoading(true);
+    const statusValue = {
+      [status]: value, // Dynamically set the status key with its corresponding value
+    };
+
     try {
-      setLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_BackendURL}/api/products/${productId}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json", // Added Content-Type header
+            "Content-Type": "application/json", // Ensure Content-Type is JSON
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
-            featured: true,
-          }),
+          body: JSON.stringify(statusValue), // Directly stringify the dynamic object
         }
       );
-      if (response.ok) {
-        setLoading(false);
-      }
+
       if (!response.ok) {
         setLoading(false);
         throw new Error(`Error: ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log(data);
 
+      setLoading(false);
+      // Additional handling if needed
+    } catch (error) {
+      console.error("Failed to update status:", error);
+      // Handle error (e.g., show a notification)
+    }
+  };
+
+  const handleMakeFeatured = async (productId) => {
+    try {
+      const featured = true;
+      handelUpdateStatus(productId, "featured", featured);
       toast.success("Product marked as featured!");
+      // setLoading(false);
     } catch (error) {
       console.error("Error marking product as featured:", error);
       toast.error("Failed to mark product as featured. Please try again.");
@@ -72,30 +87,8 @@ const ProductReview = () => {
 
   const handleRemoveFeatured = async (productId) => {
     try {
-      setLoading(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_BackendURL}/api/products/${productId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json", // Added Content-Type header
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            featured: false,
-          }),
-        }
-      );
-      if (response.ok) {
-        setLoading(false);
-      }
-      if (!response.ok) {
-        setLoading(false);
-        throw new Error(`Error: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
+      const featured = false;
+      handelUpdateStatus(productId, "featured", featured);
 
       toast.success("Product marked as featured!");
     } catch (error) {
@@ -105,9 +98,10 @@ const ProductReview = () => {
   };
 
   const handleAccept = (productId) => {
+    handelUpdateStatus(productId, "status", "accepted");
     setProducts(
       products.map((product) =>
-        product.id === productId ? { ...product, status: "Accepted" } : product
+        product.id === productId ? { ...product, status: "accepted" } : product
       )
     );
     toast.success("Product accepted!");
@@ -115,9 +109,10 @@ const ProductReview = () => {
   };
 
   const handleReject = (productId) => {
+    handelUpdateStatus(productId, "status", "pending");
     setProducts(
       products.map((product) =>
-        product.id === productId ? { ...product, status: "Rejected" } : product
+        product.id === productId ? { ...product, status: "rejected" } : product
       )
     );
     toast.error("Product rejected!");
@@ -132,9 +127,9 @@ const ProductReview = () => {
         </h2>
 
         {/* Table */}
-        <div className="overflow-x-auto  rounded-lg">
+        <div className="overflow-x-auto rounded-lg">
           <table className="min-w-full bg-white rounded-lg">
-            <thead className="">
+            <thead>
               <tr>
                 <th className="py-4 px-6 text-left text-lg font-medium">
                   Product Image
@@ -143,8 +138,12 @@ const ProductReview = () => {
                   Product Name
                 </th>
                 <th className="py-4 px-6 text-left text-lg font-medium">
+                  Featured Status
+                </th>
+                <th className="py-4 px-6 text-left text-lg font-medium">
                   Status
                 </th>
+
                 <th className="py-4 px-6 text-center text-lg font-medium">
                   Actions
                 </th>
@@ -152,7 +151,10 @@ const ProductReview = () => {
             </thead>
             <tbody>
               {products?.map((product) => (
-                <tr key={product._id} className="border-b hover:bg-gray-50">
+                <tr
+                  key={product._id}
+                  className="border-b hover:bg-gray-50 relative"
+                >
                   <td className="py-3 px-6 text-gray-800 font-medium">
                     <img
                       src={product.productImage}
@@ -162,56 +164,85 @@ const ProductReview = () => {
                   <td className="py-3 px-6 text-gray-800 font-medium capitalize">
                     {product.productName}
                   </td>
+                  <td
+                    className={`py-3 px-6  relative font-bold ${
+                      product.featured ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {product.featured ? "Featured" : "Not Featured"}
+                  </td>
                   <td className="py-3 px-6 text-gray-800 font-medium capitalize">
                     {product.status}
                   </td>
-                  <td className="py-3 px-6 text-center">
-                    <div className="flex justify-center gap-2">
-                      <Link
-                        className="bg-gray-600 text-white py-2 px-4 rounded-md text-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
-                        to={`/product/${product.slug}`}
-                      >
-                        View
-                      </Link>
-                      {product.featured ? (
-                        <button
-                          className="bg-green-500 flex items-center font-bold gap-x-1 text-white py-2 px-4 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-                          onClick={() => handleRemoveFeatured(product._id)}
-                        >
-                          Remove <LuPin />
-                        </button>
-                      ) : (
-                        <button
-                          className="bg-yellow-500 text-white py-2 px-4 rounded-md text-sm hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
-                          onClick={() => handleMakeFeatured(product._id)}
-                        >
-                          Featured
-                        </button>
-                      )}
 
-                      <button
-                        className={`bg-green-500 text-white py-2 px-4 rounded-md text-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300 transition ${
-                          product.status !== "Pending"
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                        onClick={() => handleAccept(product.id)}
-                        disabled={product.status !== "Pending"}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        className={`bg-red-500 text-white py-2 px-4 rounded-md text-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300 transition ${
-                          product.status !== "Pending"
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
-                        onClick={() => handleReject(product.id)}
-                        disabled={product.status !== "Pending"}
-                      >
-                        Reject
-                      </button>
-                    </div>
+                  <td className="py-3 px-6 text-center relative">
+                    <button
+                      onClick={() => toggleDropdown(product._id)}
+                      className="bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                    >
+                      Actions
+                    </button>
+                    {openDropdown === product._id && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
+                        <ul className="py-1">
+                          <li>
+                            <Link
+                              className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                              to={`/product/${product.slug}`}
+                            >
+                              View Product
+                            </Link>
+                          </li>
+                          {product.featured ? (
+                            <li>
+                              <button
+                                onClick={() =>
+                                  handleRemoveFeatured(product._id)
+                                }
+                                className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                              >
+                                Remove Featured
+                              </button>
+                            </li>
+                          ) : (
+                            <li>
+                              <button
+                                onClick={() => handleMakeFeatured(product._id)}
+                                className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                              >
+                                Mark as Featured
+                              </button>
+                            </li>
+                          )}
+                          <li>
+                            <button
+                              onClick={() => handleAccept(product._id)}
+                              disabled={product.status !== "pending"}
+                              className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                                product.status !== "pending"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              Accept
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              onClick={() => handleReject(product._id)}
+                              disabled={product.status !== "pending"}
+                              className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                                product.status !== "pending"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                              }`}
+                            >
+                              Reject
+                            </button>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
