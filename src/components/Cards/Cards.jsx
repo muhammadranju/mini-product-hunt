@@ -12,9 +12,11 @@ const Cards = ({ product }) => {
           alt={`Trending Product `}
         />
       </Link>
-      <h4 className="text-xl font-semibold mb-2 capitalize">
-        {product?.productName}
-      </h4>
+      <Link to={`/product/${product?.slug}`}>
+        <h4 className="text-xl cursor-pointer font-semibold mb-2 capitalize">
+          {product?.productName}
+        </h4>
+      </Link>
       <p className="text-slate-600 mb-4">
         {product?.description.length > 80
           ? product?.description.slice(0, 50) + "..."
