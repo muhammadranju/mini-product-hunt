@@ -126,7 +126,7 @@ const ManageUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
+              {users?.reverse().map((user) => (
                 <tr key={user.id}>
                   <td className="py-2 px-4 border-b">
                     <img
@@ -165,7 +165,7 @@ const ManageUsers = () => {
           </table>
         </div>
         <div className="block md:hidden">
-          {users.map((user) => (
+          {users?.reverse().map((user) => (
             <div key={user.id} className="p-4 mb-4 border rounded-lg bg-white">
               <div className="flex items-center mb-4">
                 <img
