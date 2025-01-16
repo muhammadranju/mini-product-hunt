@@ -59,17 +59,23 @@ const ManageCoupons = () => {
         }
       );
 
-      if (response.ok) {
-        setLoading(false);
-      }
-
       // Check if the response is successful
       if (!response.ok) {
+        setLoading(false);
         throw new Error(`Error: ${response.statusText}`);
       }
 
       const responseData = await response.json(); // Parse JSON response
-      setCoupons([...coupons, responseData]); // Update state with new coupon
+
+      if (response.ok) {
+        setLoading(false);
+        setCoupons([...coupons, responseData]); // Update state with new coupon
+      }
+
+      if (response.status === 400) {
+        setLoading(false);
+        toast.error(responseData.message);
+      }
       // setNewCoupon({ code: "", expiryDate: "", description: "", discount: 0 }); // Reset form
 
       console.log("Coupon added successfully:", responseData);
@@ -267,13 +273,6 @@ const ManageCoupons = () => {
                         </td>
                         <td className="border p-2 flex justify-center items-center gap-x-2">
                           <button
-                            // onClick={() =>
-                            //   editCoupon(coupon?._id, {
-                            //     ...coupon,
-                            //     description: "Updated Description",
-                            //     discount: coupon?.discount + 5,
-                            //   })
-                            // }
                             onClick={() => handleEditCoupon(coupon?._id)}
                             className="text-slate-100 bg-slate-800 p-2 rounded-xl px-3  flex items-center gap-x-1 hover:bg-slate-700"
                           >

@@ -137,7 +137,24 @@ const ManageUsers = () => {
                   </td>
                   <td className="py-2 px-4 border-b">{user.name}</td>
                   <td className="py-2 px-4 border-b">{user.email}</td>
-                  <td className="py-2 px-4 border-b capitalize">{user.role}</td>
+                  {/* <td className="py-2 px-4 border-b capitalize">{user.role}</td> */}
+
+                  <td className="py-2 px-4 border-b capitalize font-medium  text-center">
+                    <span
+                      className={`${
+                        user.role === "admin"
+                          ? "bg-blue-200/70 text-blue-700"
+                          : user.role === "user"
+                          ? "bg-green-200/70 text-green-700"
+                          : "bg-yellow-200/70 text-yellow-700"
+                      } py-1 px-3 rounded-full text-sm capitalize`}
+                    >
+                      {user.role}
+                    </span>
+
+                    {/* {user.role} */}
+                  </td>
+
                   <td className="py-2 px-4 border-b text-center">
                     <button
                       className={`bg-blue-600 text-white py-1 px-3 rounded-lg mr-2 hover:bg-blue-700 ${

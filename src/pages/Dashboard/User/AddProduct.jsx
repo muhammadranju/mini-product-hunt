@@ -44,12 +44,7 @@ const AddProduct = () => {
       createdAt: new Date(),
     };
 
-    // Simulate saving to database
     try {
-      console.log(productData);
-      // Replace with actual API call to save product data
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-
       const response = await fetch(
         `${import.meta.env.VITE_BackendURL}/api/products`,
         {
@@ -58,12 +53,15 @@ const AddProduct = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-
           body: JSON.stringify(productData),
         }
       );
 
       const data = await response.json();
+      if (data.status === 200) {
+        toast.success("Product added successfully!");
+        navigate("/dashboard/user/my-product", { replace: true });
+      }
 
       if (data.status === 400) {
         toast.error(data.message);

@@ -13,13 +13,12 @@ const Products = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
-        }/api/products?page=${currentPage}&limit=${limit}&search=${search}`,
+        }/api/products?page=${currentPage}&limit=${limit}&search=${search}&sort=votes`,
         {
           method: "GET",
         }
       );
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         setProducts(data.data);
         setTotalPages(data.pagination.totalPages);

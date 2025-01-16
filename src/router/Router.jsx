@@ -18,6 +18,7 @@ import Products from "@/pages/Product/products";
 import { createBrowserRouter } from "react-router-dom";
 import PrivateRoutes from "./PrivateRoute";
 import IsAdmin from "./IsAdmin";
+import ManageReviews from "@/pages/Dashboard/Admin/ManageReviews";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,14 @@ const router = createBrowserRouter([
         element: (
           <IsAdmin>
             <ManageCoupons />
+          </IsAdmin>
+        ),
+      },
+      {
+        path: "admin/manage-reviews",
+        element: (
+          <IsAdmin>
+            <ManageReviews />
           </IsAdmin>
         ),
       },

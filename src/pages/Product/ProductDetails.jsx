@@ -179,7 +179,7 @@ const ProductDetails = () => {
             <img
               src={product?.productImage}
               alt={product?.productName}
-              className="w-full h-auto rounded-md mb-4"
+              className="w-full lg:h-[600px] rounded-md mb-4 object-cover"
             />
             <h2 className="text-3xl capitalize font-semibold text-gray-800 mb-4">
               {product?.productName}
@@ -238,6 +238,11 @@ const ProductDetails = () => {
               <h3 className="text-2xl font-semibold text-gray-800 mb-4">
                 Reviews
               </h3>
+              {reviews?.length === 0 && (
+                <p className="text-center text-slate-800 text-2xl font-semibold">
+                  No reviews yet.
+                </p>
+              )}
               <div className="space-y-4">
                 {reviews?.map((review) => (
                   <div

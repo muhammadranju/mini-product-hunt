@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { AuthContext } from "@/context/AuthProvider";
 import { TagsInput } from "react-tag-input-component";
@@ -177,7 +177,9 @@ const MyProduct = () => {
                     />
                   </td>
                   <td className="py-3 px-4 border-b text-gray-800">
-                    {product.productName}
+                    <Link to={`/product/${product.slug}`}>
+                      {product.productName}
+                    </Link>
                   </td>
                   <td className="py-3 px-4 border-b text-center text-gray-700">
                     {product.upvotes}

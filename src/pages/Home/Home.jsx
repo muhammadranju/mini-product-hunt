@@ -1,10 +1,12 @@
 import Cards from "@/components/Cards/Cards";
+import CouponDisplay from "@/components/CouponDisplay/CouponDisplay";
 import FeaturedProductsSection from "@/components/FeaturedProductsSection/FeaturedProductsSection";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
+  const [coupons, setCoupons] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -15,7 +17,7 @@ const Home = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (response.ok) {
         setProducts(data.data);
       }
@@ -23,7 +25,20 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  console.log(products);
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BackendURL
+        }/api/admin/coupons?isValidCoupon=true`
+      ); // Replace with your API endpoint
+      const data = await response.json();
+      setCoupons(data.data); // Set fetched coupons to state
+    };
+
+    fetchCoupons();
+  }, []);
+  console.log(coupons);
   return (
     <>
       <section className="relative w-full h-96 bg-slate-900 text-white flex items-center justify-center">
@@ -40,7 +55,8 @@ const Home = () => {
         {/* Banner Section */}
 
         {/* Featured Products Section */}
-        <FeaturedProductsSection></FeaturedProductsSection>
+        <FeaturedProductsSection />
+        <CouponDisplay coupons={coupons} />
 
         {/* Trending Products Section */}
         <section className="py-16 ">
@@ -53,8 +69,8 @@ const Home = () => {
               {products
                 ?.slice(0, 6)
 
-                .map((product) => (
-                  <Cards product={product} />
+                .map((product, idx) => (
+                  <Cards key={idx} product={product} />
                 ))}
             </div>
             <div className="flex justify-center items-center mt-5">

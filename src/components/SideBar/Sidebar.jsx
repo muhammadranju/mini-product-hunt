@@ -6,6 +6,7 @@ import {
   MdDashboard,
   MdRateReview,
   MdReport,
+  MdReviews,
 } from "react-icons/md";
 import { FaUser } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
@@ -212,6 +213,21 @@ const Sidebar = ({ isSidebarOpen }) => {
                     >
                       <RiCoupon2Fill className="mr-2 text-lg" />
                       Manage Coupons
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/admin/manage-reviews"
+                      className={({ isActive }) =>
+                        `flex items-center py-2 px-3 text-sm rounded-lg hover:bg-slate-100 ${
+                          isActive
+                            ? "text-blue-600 bg-slate-100"
+                            : "text-slate-600"
+                        }`
+                      }
+                    >
+                      <MdReviews className="mr-2 text-lg" />
+                      Manage Reviews
                     </NavLink>
                   </li>
                 </>

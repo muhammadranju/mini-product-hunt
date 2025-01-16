@@ -12,7 +12,6 @@ const FeaturedProductsSection = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
       if (response.ok) {
         setProducts(data.data);
       }
@@ -27,8 +26,8 @@ const FeaturedProductsSection = () => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Product Cards */}
-          {products?.map((product) => (
-            <FeaturedProductsCard product={product} />
+          {products?.slice(0, 4)?.map((product) => (
+            <FeaturedProductsCard key={product._id} product={product} />
           ))}
         </div>
       </div>

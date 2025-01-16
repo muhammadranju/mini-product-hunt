@@ -142,7 +142,7 @@ const ProductReview = () => {
   };
 
   const handleReject = (productId) => {
-    handelUpdateStatus(productId, "status", "pending");
+    handelUpdateStatus(productId, "status", "rejected");
     setProducts(
       products.map((product) =>
         product.id === productId ? { ...product, status: "rejected" } : product
@@ -204,9 +204,20 @@ const ProductReview = () => {
                   >
                     {product.featured ? "Featured" : "Not Featured"}
                   </td>
-                  <td className="py-3 px-6 text-gray-800 font-medium capitalize">
+                  <td
+                    className={`text-base text-gray-800 font-semibold py-4 px-5 flex justify-center mt-6 text-center capitalize badge badge-lg ${
+                      product.status === "pending"
+                        ? "text-yellow-500 bg-yellow-500/10"
+                        : product.status.toLowerCase() === "accepted"
+                        ? "text-green-500 bg-green-500/10"
+                        : product.status === "rejected"
+                        ? "text-red-500 bg-red-500/10"
+                        : ""
+                    }`}
+                  >
                     {product.status}
                   </td>
+
                   <td className="py-3 px-6 text-center relative">
                     <button
                       onClick={() => toggleDropdown(product._id)}
@@ -251,9 +262,13 @@ const ProductReview = () => {
                           <li>
                             <button
                               onClick={() => handleAccept(product._id)}
-                              disabled={product.status !== "pending"}
+                              disabled={
+                                product.status !== "pending" &&
+                                product.status !== "rejected"
+                              }
                               className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
-                                product.status !== "pending"
+                                product.status !== "pending" &&
+                                product.status !== "rejected"
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
                               }`}
@@ -261,11 +276,16 @@ const ProductReview = () => {
                               Accept
                             </button>
                           </li>
+
                           <li>
                             <button
                               onClick={() => handleReject(product._id)}
-                              disabled={product.status !== "pending"}
+                              disabled={
+                                product.status !== "accepted" &&
+                                product.status !== "pending"
+                              }
                               className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                                product.status !== "accepted" &&
                                 product.status !== "pending"
                                   ? "opacity-50 cursor-not-allowed"
                                   : ""
@@ -308,7 +328,13 @@ const ProductReview = () => {
                   >
                     {product.featured ? "Featured" : "Not Featured"}
                   </p>
-                  <p className="text-sm text-gray-800 capitalize">
+                  <p
+                    className={`text-sm text-gray-800 capitalize ${
+                      product.status !== "pending"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }`}
+                  >
                     Status: {product.status}
                   </p>
                 </div>
