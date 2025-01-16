@@ -141,20 +141,20 @@ const ManageUsers = () => {
                   <td className="py-2 px-4 border-b text-center">
                     <button
                       className={`bg-blue-600 text-white py-1 px-3 rounded-lg mr-2 hover:bg-blue-700 ${
-                        user.role === "Moderator" &&
+                        user.role === "moderator" &&
                         "opacity-50 cursor-not-allowed"
                       }`}
                       onClick={() => handleMakeModerator(user.email)}
-                      disabled={user.role === "Moderator"}
+                      disabled={user.role === "moderator"}
                     >
                       Moderator
                     </button>
                     <button
                       className={`bg-slate-800 text-white py-1 px-3 rounded-lg hover:bg-slate-700 ${
-                        user.role === "Admin" && "opacity-50 cursor-not-allowed"
+                        user.role === "admin" && "opacity-50 cursor-not-allowed"
                       }`}
                       onClick={() => handleMakeAdmin(user.email)}
-                      disabled={user.role === "Admin"}
+                      disabled={user.role === "admin"}
                     >
                       Admin
                     </button>

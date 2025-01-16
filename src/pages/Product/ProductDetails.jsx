@@ -148,12 +148,19 @@ const ProductDetails = () => {
     );
     const data = await response.json();
     console.log(data);
+
     if (response.ok) {
       toast.success("Product reported successfully!");
       document.getElementById("reportModal").close();
     }
-    console.log(productId);
-    console.log(reason);
+
+    if (
+      data.status === 400 ||
+      data.message.includes("You have already reported this product.")
+    ) {
+      toast.error("You already reported this product.");
+      document.getElementById("reportModal").close();
+    }
   };
 
   return (

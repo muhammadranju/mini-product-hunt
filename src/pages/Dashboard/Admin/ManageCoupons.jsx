@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
+import { FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 const ManageCoupons = () => {
   // Ensure `coupons` is always an array
@@ -169,7 +171,7 @@ const ManageCoupons = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto">
-      <div className="w-11/12 mx-auto mt-10 p-6 bg-gray-50 shadow-lg rounded-lg">
+      <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Manage Coupons
         </h2>
@@ -223,7 +225,7 @@ const ManageCoupons = () => {
             </div>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl"
             >
               Add Coupon
             </button>
@@ -251,13 +253,19 @@ const ManageCoupons = () => {
                   {Array?.isArray(coupons) &&
                     coupons?.map((coupon) => (
                       <tr key={coupon?._id}>
-                        <td className="border p-2">{coupon?.code}</td>
-                        <td className="border p-2">
+                        <td className="border p-2 text-center">
+                          {coupon?.code}
+                        </td>
+                        <td className="border p-2 text-center">
                           {new Date(coupon?.expiryDate).toLocaleDateString()}
                         </td>
-                        <td className="border p-2">{coupon?.description}</td>
-                        <td className="border p-2">{coupon?.discount}%</td>
-                        <td className="border p-2">
+                        <td className="border p-2 text-center">
+                          {coupon?.description}
+                        </td>
+                        <td className="border p-2 text-center">
+                          {coupon?.discount}%
+                        </td>
+                        <td className="border p-2 flex justify-center items-center gap-x-2">
                           <button
                             // onClick={() =>
                             //   editCoupon(coupon?._id, {
@@ -267,15 +275,15 @@ const ManageCoupons = () => {
                             //   })
                             // }
                             onClick={() => handleEditCoupon(coupon?._id)}
-                            className="text-blue-500 hover:text-blue-700 mr-2"
+                            className="text-slate-100 bg-slate-800 p-2 rounded-xl px-3  flex items-center gap-x-1 hover:bg-slate-700"
                           >
-                            Edit
+                            Edit <FaEdit />
                           </button>
                           <button
                             onClick={() => deleteCoupon(coupon?._id)}
-                            className="text-red-500 hover:text-red-700"
+                            className="text-slate-100 bg-red-600 p-2 rounded-xl px-3  flex items-center gap-x-1 hover:bg-red-700"
                           >
-                            Delete
+                            Delete <MdDelete />
                           </button>
                         </td>
                       </tr>

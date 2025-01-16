@@ -91,7 +91,7 @@ const Navbar = () => {
               </NavLink>
               <NavLink
                 to={"/auth/signup"}
-                className="px-6 py-3 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
+                className="px-6 py-3 lg:flex hidden text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-700 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50"
               >
                 Sign Up
               </NavLink>

@@ -65,6 +65,10 @@ const router = createBrowserRouter([
       },
       // User Dashboard
       {
+        path: "user/product/details/:id",
+        element: <MyProfile />,
+      },
+      {
         path: "user/my-profile",
         element: <MyProfile />,
       },

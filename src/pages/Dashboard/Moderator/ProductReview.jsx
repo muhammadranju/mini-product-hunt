@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { LuPin } from "react-icons/lu";
 import { AuthContext } from "@/context/AuthProvider";
+import { GrTransaction } from "react-icons/gr";
+import swal from "sweetalert";
+
 const ProductReview = () => {
   const [products, setProducts] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -75,9 +77,25 @@ const ProductReview = () => {
 
   const handleMakeFeatured = async (productId) => {
     try {
-      const featured = true;
-      handelUpdateStatus(productId, "featured", featured);
-      toast.success("Product marked as featured!");
+      swal({
+        title: "Are you sure?",
+        text: "Do want to Make this Product Featured",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          const featured = true;
+          handelUpdateStatus(productId, "featured", featured);
+          swal("Product marked as featured!", {
+            icon: "success",
+          });
+        } else {
+          swal("Product not marked as featured!", {
+            icon: "error",
+          });
+        }
+      });
       // setLoading(false);
     } catch (error) {
       console.error("Error marking product as featured:", error);
@@ -87,10 +105,25 @@ const ProductReview = () => {
 
   const handleRemoveFeatured = async (productId) => {
     try {
-      const featured = false;
-      handelUpdateStatus(productId, "featured", featured);
-
-      toast.success("Product marked as featured!");
+      swal({
+        title: "Are you sure?",
+        text: "Do want to Remove this Product Featured",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          const featured = false;
+          handelUpdateStatus(productId, "featured", featured);
+          swal("Product marked as featured!", {
+            icon: "success",
+          });
+        } else {
+          swal("Product not marked as featured!", {
+            icon: "error",
+          });
+        }
+      });
     } catch (error) {
       console.error("Error marking product as featured:", error);
       toast.error("Failed to mark product as featured. Please try again.");
@@ -126,8 +159,8 @@ const ProductReview = () => {
           Product Review Queue
         </h2>
 
-        {/* Table */}
-        <div className="overflow-x-auto rounded-lg">
+        {/* Table format for larger screens */}
+        <div className="hidden md:block overflow-x-auto rounded-lg">
           <table className="min-w-full bg-white rounded-lg">
             <thead>
               <tr>
@@ -143,13 +176,12 @@ const ProductReview = () => {
                 <th className="py-4 px-6 text-left text-lg font-medium">
                   Status
                 </th>
-
                 <th className="py-4 px-6 text-center text-lg font-medium">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="overflow-hidden">
               {products?.map((product) => (
                 <tr
                   key={product._id}
@@ -159,13 +191,14 @@ const ProductReview = () => {
                     <img
                       src={product.productImage}
                       className="w-12 h-12 rounded-md"
+                      alt="Product"
                     />
                   </td>
                   <td className="py-3 px-6 text-gray-800 font-medium capitalize">
                     {product.productName}
                   </td>
                   <td
-                    className={`py-3 px-6  relative font-bold ${
+                    className={`py-3 px-6 font-bold ${
                       product.featured ? "text-green-600" : "text-red-600"
                     }`}
                   >
@@ -174,13 +207,14 @@ const ProductReview = () => {
                   <td className="py-3 px-6 text-gray-800 font-medium capitalize">
                     {product.status}
                   </td>
-
                   <td className="py-3 px-6 text-center relative">
                     <button
                       onClick={() => toggleDropdown(product._id)}
-                      className="bg-blue-600 text-white py-2 px-4 rounded-md text-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+                      className="bg-slate-800 text-white py-2 px-3 rounded-xl text-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300 transition"
                     >
-                      Actions
+                      <span className="flex items-center gap-x-1">
+                        <GrTransaction /> Actions
+                      </span>
                     </button>
                     {openDropdown === product._id && (
                       <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
@@ -248,6 +282,108 @@ const ProductReview = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Card format for smaller screens */}
+        <div className="md:hidden grid grid-cols-1 gap-4">
+          {products?.map((product) => (
+            <div
+              key={product._id}
+              className="bg-white p-4 shadow-md rounded-lg"
+            >
+              <div className="flex items-start space-x-4">
+                <img
+                  src={product.productImage}
+                  className="w-16 h-16 rounded-md"
+                  alt="Product"
+                />
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 capitalize">
+                    {product.productName}
+                  </h3>
+                  <p
+                    className={`font-bold ${
+                      product.featured ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {product.featured ? "Featured" : "Not Featured"}
+                  </p>
+                  <p className="text-sm text-gray-800 capitalize">
+                    Status: {product.status}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-4 flex justify-between items-center">
+                <button
+                  onClick={() => toggleDropdown(product._id)}
+                  className="bg-slate-800 text-white py-2 px-3 rounded-xl text-sm hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300 transition"
+                >
+                  <span className="flex items-center gap-x-1">
+                    <GrTransaction /> Actions
+                  </span>
+                </button>
+                {openDropdown === product._id && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
+                    <ul className="py-1">
+                      <li>
+                        <Link
+                          className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                          to={`/product/${product.slug}`}
+                        >
+                          View Product
+                        </Link>
+                      </li>
+                      {product.featured ? (
+                        <li>
+                          <button
+                            onClick={() => handleRemoveFeatured(product._id)}
+                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                          >
+                            Remove Featured
+                          </button>
+                        </li>
+                      ) : (
+                        <li>
+                          <button
+                            onClick={() => handleMakeFeatured(product._id)}
+                            className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                          >
+                            Mark as Featured
+                          </button>
+                        </li>
+                      )}
+                      <li>
+                        <button
+                          onClick={() => handleAccept(product._id)}
+                          disabled={product.status !== "pending"}
+                          className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                            product.status !== "pending"
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          Accept
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => handleReject(product._id)}
+                          disabled={product.status !== "pending"}
+                          className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                            product.status !== "pending"
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                        >
+                          Reject
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
