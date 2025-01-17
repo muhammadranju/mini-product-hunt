@@ -51,9 +51,9 @@ const Statistics = () => {
         totalUsers: data.data.users.total,
       };
       setStatistics(chartData);
-      if (response.ok) {
-        setUsers(data.data);
-      }
+      // if (response.ok) {
+      //   setUsers(data.data);
+      // }
     };
 
     fetchStatistics();

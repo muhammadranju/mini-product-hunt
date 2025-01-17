@@ -1,3 +1,4 @@
+import BannerDesign from "@/components/BannerDesign/BannerDesign";
 import Cards from "@/components/Cards/Cards";
 import CouponDisplay from "@/components/CouponDisplay/CouponDisplay";
 import FeaturedProductsSection from "@/components/FeaturedProductsSection/FeaturedProductsSection";
@@ -37,10 +38,6 @@ const Home = () => {
         }/api/admin/coupons?isValidCoupon=true`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
         }
       ); // Replace with your API endpoint
       const data = await response.json();
@@ -49,17 +46,29 @@ const Home = () => {
 
     fetchCoupons();
   }, []);
-  console.log(coupons);
   return (
     <>
-      <section className="relative w-full h-96 bg-slate-900 text-white flex items-center justify-center">
-        <div className="text-center lg:w-full lg:px-0 px-2">
-          <h2 className="text-4xl font-bold mb-4">
-            Discover and Share Tech Products
-          </h2>
-          <p className="text-xl">
-            Explore the best of Web Apps, AI tools, Software, Games, and more!
-          </p>
+      <section className="relative w-full h-80 mt-10 bg-slate-900 text-white flex items-center justify-center">
+        <div className="relative h-[400px] w-full ">
+          <div
+            className="absolute inset-0 bg-cover bg-center "
+            style={{
+              backgroundImage: "url(/banner-image.jpg)",
+            }}
+          ></div>
+          <div className="absolute inset-0 bg-blue-900 bg-opacity-85 flex flex-col items-center justify-center">
+            <h2 className="text-white text-xl md:text-4xl font-bold mb-4">
+              Discover and Share Tech Products
+            </h2>
+            <p className="text-white text-center mb-6 max-w-lg px-4">
+              Explore the best of Web Apps, AI tools, Software, Games, and more!
+            </p>
+            <Link to={"dashboard/user/my-profile"}>
+              <button className="text-slate-50 py-2 px-6 rounded-full text-lg font-semibold   transition-colors duration-300 transform  bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring focus:ring-slate-300 focus:ring-opacity-50">
+                Explore Now!
+              </button>
+            </Link>
+          </div>
         </div>
       </section>
       <div className="w-11/12 md:w-11/12 lg:w-11/12 xl:container mx-auto">
@@ -94,6 +103,7 @@ const Home = () => {
           </div>
         </section>
       </div>
+      <BannerDesign />
     </>
   );
 };
