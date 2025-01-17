@@ -6,7 +6,9 @@ const FeaturedProductsSection = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_BackendURL}/api/products?featured=true`,
+        `${
+          import.meta.env.VITE_BackendURL
+        }/api/products?status=accepted&sort=false`,
         {
           method: "GET",
         }

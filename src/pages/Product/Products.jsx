@@ -13,7 +13,7 @@ const Products = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
-        }/api/products?page=${currentPage}&limit=${limit}&search=${search}&sort=votes&status=accepted`,
+        }/api/products?page=${currentPage}&limit=${limit}&search=${search}&sort=true&status=accepted`,
         {
           method: "GET",
           headers: {

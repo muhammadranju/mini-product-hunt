@@ -290,6 +290,7 @@ const ProductDetails = () => {
                 ))}
               </div>
             </div>
+
             {/* Post Review Section */}
             <div className="lg:w-[35%]">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
