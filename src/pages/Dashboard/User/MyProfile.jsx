@@ -1,3 +1,4 @@
+import PaymentForm from "@/components/PaymentForm/PaymentForm";
 import { AuthContext } from "@/context/AuthProvider";
 import useRole from "@/hooks/useRole";
 import React, { useContext, useState } from "react";
@@ -7,16 +8,15 @@ const MyProfile = () => {
   const { user, signOut } = useContext(AuthContext);
   const [role] = useRole();
   console.log(role);
+  const [verified, setVerified] = useState(role?.user?.subscription);
+  const amount = 120;
 
   const handleSubscribe = () => {
-    // Simulate subscription logic
-    toast.success("Redirecting to payment page...");
-    // After payment success
-    setUser((prevState) => ({ ...prevState, isSubscribed: true }));
-    toast.success("Subscription successful!");
+    document.getElementById("paymentModel").showModal();
+
+    // toast.success("Subscription successful!");
   };
 
-  const isSubscribed = role?.user?.subscription;
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto pt-36 bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-2xl rounded-lg">
@@ -30,17 +30,17 @@ const MyProfile = () => {
             {user?.displayName}
           </h2>
           <p className="text-gray-500">{user?.email}</p>
-          <p className="text-gray-800 font-semibold capitalize">
+          <p className="text-gray-800 font-semi bold capitalize">
             Role: {role?.user?.role}
           </p>
           {role?.role === "admin" || role?.role === "moderator" ? null : (
             <>
-              {!isSubscribed ? (
+              {!role?.user?.subscription ? (
                 <button
                   onClick={handleSubscribe}
-                  className="mt-6 w-full text-center px-5 py-3 text-base font-medium tracking-wide text-white bg-indigo-600 rounded-full hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+                  className="mt-6 w-full text-center px-5 py-3 text-base font-medium tracking-wide text-white  rounded-full bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-4 focus:ring-slate-300"
                 >
-                  Subscribe for $9.99
+                  Subscribe for ${amount}
                 </button>
               ) : (
                 <div className="mt-6 flex items-center gap-x-3">
@@ -56,6 +56,18 @@ const MyProfile = () => {
           )}
         </div>
       </div>
+
+      <dialog id="paymentModel" className="modal">
+        <div className="modal-box w-11/12 flex flex-col items-center">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <PaymentForm amount={amount}></PaymentForm>
+        </div>
+      </dialog>
     </div>
   );
 };
