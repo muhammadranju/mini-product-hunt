@@ -19,10 +19,13 @@ const ProductReview = () => {
     // Fetch all products for review (mocked here)
     const fetchProducts = async () => {
       const response = await fetch(
-        `${import.meta.env.VITE_BackendURL}/api/products?all=true`,
+        `${
+          import.meta.env.VITE_BackendURL
+        }/api/products?all=true&limit=${1000000}`,
         {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -36,6 +39,8 @@ const ProductReview = () => {
 
     fetchProducts();
   }, []);
+
+  console.log(products);
 
   const handleViewDetails = (productId) => {
     navigate(`/dashboard/moderator/product-details/${productId}`);

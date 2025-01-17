@@ -28,6 +28,7 @@ const MyProduct = () => {
         {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -48,6 +49,7 @@ const MyProduct = () => {
       {
         method: "GET",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       }
@@ -119,6 +121,7 @@ const MyProduct = () => {
           {
             method: "DELETE",
             headers: {
+              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }

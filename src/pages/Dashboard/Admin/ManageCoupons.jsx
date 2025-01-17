@@ -27,8 +27,14 @@ const ManageCoupons = () => {
   const fetchCoupons = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BackendURL}/api/admin/coupons`
-      ); // Replace with your actual API endpoint
+        `${import.meta.env.VITE_BackendURL}/api/admin/coupons`, // Your API endpoint
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (Array.isArray(response.data.data)) {
         setCoupons(response.data.data);
@@ -129,7 +135,8 @@ const ManageCoupons = () => {
         {
           method: "GET",
           headers: {
-            "Content-Type": "application/json", // Specify content type
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
       );

@@ -16,6 +16,7 @@ const ReportedContents = () => {
         {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -44,6 +45,7 @@ const ReportedContents = () => {
           {
             method: "DELETE",
             headers: {
+              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }

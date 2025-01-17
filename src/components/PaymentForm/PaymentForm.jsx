@@ -31,7 +31,10 @@ const PaymentForm = ({ amount }) => {
         `${import.meta.env.VITE_BackendURL}/api/admin/coupons/validate-coupon`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
           body: JSON.stringify({ coupon, amount: discountedAmount }),
         }
       );

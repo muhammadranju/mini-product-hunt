@@ -19,6 +19,7 @@ const ManageReviews = () => {
         {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -49,6 +50,7 @@ const ManageReviews = () => {
             {
               method: "DELETE",
               headers: {
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
             }
@@ -72,7 +74,7 @@ const ManageReviews = () => {
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto bg-gray-50">
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
-          Manage Users
+          Manage Reviews
         </h2>
         <div className="hidden md:block">
           <table className="min-w-full bg-white">
@@ -80,8 +82,8 @@ const ManageReviews = () => {
               <tr>
                 <th className="py-2 px-4 border-b">Image</th>
                 <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">Review</th>
-                <th className="py-2 px-4 border-b">Rating</th>
+                <th className="py-2 px-4 border-b">Review's</th>
+                <th className="py-2 px-4 border-b">Rating's</th>
                 <th className="py-2 px-4 border-b">Email</th>
                 <th className="py-2 px-4 border-b text-center">Actions</th>
               </tr>

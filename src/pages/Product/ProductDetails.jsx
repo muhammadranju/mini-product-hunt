@@ -26,6 +26,10 @@ const ProductDetails = () => {
         `${import.meta.env.VITE_BackendURL}/api/products/${id}`,
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       const data = await response.json();
@@ -39,7 +43,14 @@ const ProductDetails = () => {
   useEffect(() => {
     async function getReviews() {
       const reviewResponse = await fetch(
-        `${import.meta.env.VITE_BackendURL}/api/reviews/${product?._id}`
+        `${import.meta.env.VITE_BackendURL}/api/reviews/${product?._id}`,
+        {
+          headers: {
+            method: "GET",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       const reviewData = await reviewResponse.json();

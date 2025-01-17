@@ -15,6 +15,7 @@ const ManageUsers = () => {
         {
           method: "GET",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
@@ -38,6 +39,7 @@ const ManageUsers = () => {
       {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
@@ -128,15 +130,19 @@ const ManageUsers = () => {
             <tbody>
               {users?.reverse().map((user) => (
                 <tr key={user.id}>
-                  <td className="py-2 px-4 border-b">
+                  <td className="py-2 px-4 border-b ">
                     <img
                       src={user.photoURL}
                       className="w-12 h-12 rounded-md"
                       alt="User"
                     />
                   </td>
-                  <td className="py-2 px-4 border-b">{user.name}</td>
-                  <td className="py-2 px-4 border-b">{user.email}</td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {user.name}
+                  </td>
+                  <td className="py-2 px-4 border-b text-center">
+                    {user.email}
+                  </td>
                   {/* <td className="py-2 px-4 border-b capitalize">{user.role}</td> */}
 
                   <td className="py-2 px-4 border-b capitalize font-medium  text-center">

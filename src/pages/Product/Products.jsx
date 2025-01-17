@@ -13,9 +13,13 @@ const Products = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
-        }/api/products?page=${currentPage}&limit=${limit}&search=${search}&sort=votes`,
+        }/api/products?page=${currentPage}&limit=${limit}&search=${search}&sort=votes&status=accepted`,
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       const data = await response.json();

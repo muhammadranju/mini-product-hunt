@@ -12,9 +12,12 @@ const CouponDisplay = ({ coupons }) => {
   return (
     <section className=" ">
       <div className="w-11/12 mx-auto py-10 ">
-        <h2 className="text-3xl font-semibold text-center mb-10 text-gray-800">
+        <h2 className="text-3xl font-semibold text-center  text-gray-800">
           Limited Time Offers
         </h2>
+        <p className="text-center mb-10">
+          Get a Offers & discount on your first Subscription
+        </p>
 
         <Swiper
           spaceBetween={30}

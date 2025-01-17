@@ -14,6 +14,10 @@ const Home = () => {
         `${import.meta.env.VITE_BackendURL}/api/products`,
         {
           method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
       const data = await response.json();
@@ -30,7 +34,14 @@ const Home = () => {
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
-        }/api/admin/coupons?isValidCoupon=true`
+        }/api/admin/coupons?isValidCoupon=true`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       ); // Replace with your API endpoint
       const data = await response.json();
       setCoupons(data.data); // Set fetched coupons to state
