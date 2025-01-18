@@ -329,7 +329,7 @@ const ProductDetails = () => {
                       />
                       <input
                         type="hidden"
-                        value={"userImage"}
+                        value={user?.photoURL}
                         name="reviewerImage"
                       />
                     </div>
