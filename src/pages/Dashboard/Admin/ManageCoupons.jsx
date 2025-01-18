@@ -4,6 +4,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import toast from "react-hot-toast";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { Helmet } from "react-helmet";
 
 const ManageCoupons = () => {
   // Ensure `coupons` is always an array
@@ -184,6 +185,9 @@ const ManageCoupons = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto">
+      <Helmet>
+        <title> Manage Coupons - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Manage Coupons

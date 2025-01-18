@@ -8,6 +8,7 @@ import {
 import { MdDashboard, MdRateReview } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 // Mock data for statistics (can be fetched from your server)
 // const statisticsData = {
@@ -60,6 +61,9 @@ const Dashboard = () => {
   return (
     <>
       <main className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto">
+        <Helmet>
+          <title>Dashboard - Product Hunt</title>
+        </Helmet>
         <div className="min-h-screen bg-gray-50">
           <div className="container mx-auto py-10 px-5">
             {/* Dashboard Title */}

@@ -2,6 +2,7 @@ import PaymentForm from "@/components/PaymentForm/PaymentForm";
 import { AuthContext } from "@/context/AuthProvider";
 import useRole from "@/hooks/useRole";
 import React, { useContext, useState } from "react";
+import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 
 const MyProfile = () => {
@@ -19,6 +20,9 @@ const MyProfile = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto pt-36 bg-gradient-to-br from-gray-50 to-gray-100">
+      <Helmet>
+        <title>My Profile - Product Hunt</title>
+      </Helmet>
       <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-2xl rounded-lg">
         <div className="flex flex-col items-center">
           <img

@@ -8,6 +8,7 @@ import {
   ArcElement,
   CategoryScale,
 } from "chart.js";
+import { Helmet } from "react-helmet";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
@@ -99,6 +100,9 @@ const Statistics = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 max-h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title> Admin Statistics - Product Hunt</title>
+      </Helmet>
       <div className="max-w-6xl mx-auto mt-10 p-6 rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Admin Statistics

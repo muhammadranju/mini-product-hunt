@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import FeaturedProductsCard from "../Cards/FeaturedProductsCard";
+import FeaturedCardSkeletons from "../Cards/FeaturedCardSkeletons";
 
 const FeaturedProductsSection = () => {
   const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
@@ -15,9 +18,11 @@ const FeaturedProductsSection = () => {
       );
       const data = await response.json();
       if (response.ok) {
+        setLoading(false);
         setProducts(data.data);
       }
     };
+    setLoading(false);
     fetchProducts();
   }, []);
   return (
@@ -28,9 +33,21 @@ const FeaturedProductsSection = () => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Product Cards */}
-          {products?.slice(0, 4)?.map((product) => (
-            <FeaturedProductsCard key={product._id} product={product} />
-          ))}
+
+          {loading ? (
+            <>
+              <FeaturedCardSkeletons />
+              <FeaturedCardSkeletons />
+              <FeaturedCardSkeletons />
+              <FeaturedCardSkeletons />
+            </>
+          ) : (
+            products
+              ?.slice(0, 4)
+              ?.map((product) => (
+                <FeaturedProductsCard key={product._id} product={product} />
+              ))
+          )}
         </div>
       </div>
     </section>

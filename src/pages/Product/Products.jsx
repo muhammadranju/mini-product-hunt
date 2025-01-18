@@ -1,5 +1,7 @@
 import Cards from "@/components/Cards/Cards";
+import CardSkeleton from "@/components/Cards/CardSkeleton";
 import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -7,9 +9,11 @@ const Products = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [limit, setLimit] = useState(6);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
@@ -24,10 +28,12 @@ const Products = () => {
       );
       const data = await response.json();
       if (response.ok) {
+        setLoading(false);
         setProducts(data.data);
         setTotalPages(data.pagination.totalPages);
       }
     };
+    setLoading(false);
     fetchProducts();
   }, [currentPage, limit, search]);
 
@@ -46,6 +52,9 @@ const Products = () => {
   return (
     <>
       <div className="w-11/12 md:w-11/12  lg:w-11/12 xl:container mx-auto my-20">
+        <Helmet>
+          <title>Products - Product Hunt</title>
+        </Helmet>
         <div className="max-w-[40%] mx-auto my-2">
           <label
             htmlFor="username"
@@ -60,6 +69,23 @@ const Products = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+
+        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-16">
+          {loading ? (
+            <>
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </>
+          ) : (
+            products
+              ?.reverse()
+              ?.map((product) => <Cards key={product._id} product={product} />)
+          )}
+        </div>
         {products?.length === 0 && (
           <div className="flex justify-center items-center my-64">
             <p className="text-center flex text-5xl font-semibold items-center justify-center text-gray-800 dark:text-gray-300">
@@ -67,11 +93,6 @@ const Products = () => {
             </p>
           </div>
         )}
-        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-16">
-          {products?.reverse()?.map((product) => (
-            <Cards key={product._id} product={product} />
-          ))}
-        </div>
 
         <div className="flex justify-center mt-5">
           <button

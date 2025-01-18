@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { AuthContext } from "@/context/AuthProvider";
 import { GrTransaction } from "react-icons/gr";
 import swal from "sweetalert";
+import { Helmet } from "react-helmet";
 
 const ProductReview = () => {
   const [products, setProducts] = useState([]);
@@ -159,6 +160,9 @@ const ProductReview = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title> Product Review - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
         <h2 className="text-3xl font-semibold text-center text-gray-900 mb-6">
           Product Review Queue
@@ -233,11 +237,11 @@ const ProductReview = () => {
                       </span>
                     </button>
                     {openDropdown === product._id && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
+                      <div className="absolute right-0 font-bold mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-[1000]">
                         <ul className="py-1">
                           <li>
                             <Link
-                              className="block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                              className="block px-4 py-2 btn-sm text-gray-800 hover:bg-gray-100 transition"
                               to={`/product/${product.slug}`}
                             >
                               View Product
@@ -249,7 +253,7 @@ const ProductReview = () => {
                                 onClick={() =>
                                   handleRemoveFeatured(product._id)
                                 }
-                                className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                                className="w-full btn-sm block px-4 py-2 text-blue-800 hover:bg-gray-100 transition"
                               >
                                 Remove Featured
                               </button>
@@ -258,7 +262,7 @@ const ProductReview = () => {
                             <li>
                               <button
                                 onClick={() => handleMakeFeatured(product._id)}
-                                className="w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition"
+                                className="w-full btn-sm block px-4 py-2 text-blue-600 hover:bg-gray-100 transition"
                               >
                                 Mark as Featured
                               </button>
@@ -271,7 +275,7 @@ const ProductReview = () => {
                                 product.status !== "pending" &&
                                 product.status !== "rejected"
                               }
-                              className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                              className={`w-full  block btn-sm  px-4 py-2 text-green-600 hover:bg-gray-100 transition ${
                                 product.status !== "pending" &&
                                 product.status !== "rejected"
                                   ? "opacity-50 cursor-not-allowed"
@@ -289,7 +293,7 @@ const ProductReview = () => {
                                 product.status !== "accepted" &&
                                 product.status !== "pending"
                               }
-                              className={`w-full text-left block px-4 py-2 text-gray-800 hover:bg-gray-100 transition ${
+                              className={`w-full btn-sm block px-4 py-2 text-red-600 hover:bg-gray-100 transition ${
                                 product.status !== "accepted" &&
                                 product.status !== "pending"
                                   ? "opacity-50 cursor-not-allowed"
@@ -310,7 +314,7 @@ const ProductReview = () => {
         </div>
 
         {/* Card format for smaller screens */}
-        <div className="md:hidden grid grid-cols-1 gap-4">
+        <div className="md:hidden grid grid-cols-1 gap-4 font-bold">
           {products?.map((product) => (
             <div
               key={product._id}

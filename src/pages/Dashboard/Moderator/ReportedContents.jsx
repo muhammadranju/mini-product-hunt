@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { MdDelete } from "react-icons/md";
 import swal from "sweetalert";
+import { Helmet } from "react-helmet";
 
 const ReportedContents = () => {
   const [reportedProducts, setReportedProducts] = useState([]);
@@ -66,6 +67,9 @@ const ReportedContents = () => {
   };
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title> Reported Contents - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Reported Contents

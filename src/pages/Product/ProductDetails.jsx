@@ -7,6 +7,7 @@ import { FaChevronUp, FaCommentDots, FaRegCommentDots } from "react-icons/fa";
 import toast from "react-hot-toast";
 import useRole from "@/hooks/useRole";
 import ReactStars from "react-rating-stars-component";
+import { Helmet } from "react-helmet";
 
 const ProductDetails = () => {
   const [product, setProducts] = useState([]);
@@ -176,6 +177,9 @@ const ProductDetails = () => {
 
   return (
     <div className="w-11/12 md:w-11/12 lg:w-11/12  xl:container mx-auto  mb-10">
+      <Helmet>
+        <title> Product Details - Product Hunt</title>
+      </Helmet>
       <div className="min-h-screen mt-10">
         <div className="w-11/12  mx-auto bg-white p-8 shadow-lg rounded-lg">
           {/* Product Details Section */}

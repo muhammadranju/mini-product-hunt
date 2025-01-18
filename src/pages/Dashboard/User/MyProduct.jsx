@@ -5,6 +5,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import { TagsInput } from "react-tag-input-component";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { Helmet } from "react-helmet";
 
 const MyProduct = () => {
   const [products, setProducts] = useState([]);
@@ -143,6 +144,9 @@ const MyProduct = () => {
 
   return (
     <div className="ml-0 md:ml-64 py-16 mt-5 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title>My Products - Product Hunt</title>
+      </Helmet>
       <div className=" w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl sm:text-3xl font-semibold text-center mb-6 text-gray-800">
           My Products
@@ -313,7 +317,7 @@ const MyProduct = () => {
           <button
             type="submit"
             onClick={() => handleUpdate(updateProduct)}
-            className="px-4 py-2 w-full bg-blue-600 text-white rounded"
+            className="px-4 py-2 w-full bg-slate-800 mt-2  text-white rounded-lg"
           >
             Update Product
           </button>

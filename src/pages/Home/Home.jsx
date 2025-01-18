@@ -1,16 +1,20 @@
 import BannerDesign from "@/components/BannerDesign/BannerDesign";
 import Cards from "@/components/Cards/Cards";
+import CardSkeleton from "@/components/Cards/CardSkeleton";
 import CouponDisplay from "@/components/CouponDisplay/CouponDisplay";
 import FeaturedProductsSection from "@/components/FeaturedProductsSection/FeaturedProductsSection";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [coupons, setCoupons] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       const response = await fetch(
         `${import.meta.env.VITE_BackendURL}/api/products`,
         {
@@ -24,14 +28,18 @@ const Home = () => {
       const data = await response.json();
       // console.log(data);
       if (response.ok) {
+        setLoading(false);
         setProducts(data.data);
       }
     };
+
+    setLoading(false);
     fetchProducts();
   }, []);
 
   useEffect(() => {
     const fetchCoupons = async () => {
+      setLoading(true);
       const response = await fetch(
         `${
           import.meta.env.VITE_BackendURL
@@ -40,15 +48,20 @@ const Home = () => {
           method: "GET",
         }
       ); // Replace with your API endpoint
+      setLoading(false);
       const data = await response.json();
       setCoupons(data.data); // Set fetched coupons to state
     };
 
+    setLoading(false);
     fetchCoupons();
   }, []);
   return (
     <>
       <section className="relative w-full h-80 mt-10 bg-slate-900 text-white flex items-center justify-center">
+        <Helmet>
+          <title>Home - Product Hunt</title>
+        </Helmet>
         <div className="relative h-[400px] w-full ">
           <div
             className="absolute inset-0 bg-cover bg-center "
@@ -86,12 +99,22 @@ const Home = () => {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Product Cards */}
-              {products
-                ?.slice(0, 6)
+              {loading ? (
+                <>
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                  <CardSkeleton />
+                </>
+              ) : (
+                products
+                  ?.slice(0, 6)
 
-                .map((product, idx) => (
-                  <Cards key={idx} product={product} />
-                ))}
+                  .map((product, idx) => <Cards key={idx} product={product} />)
+              )}
+              {}
             </div>
             <div className="flex justify-center items-center mt-5">
               <Link to={"/products"}>

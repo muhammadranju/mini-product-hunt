@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import swal from "sweetalert";
 import ReactStars from "react-rating-stars-component";
 import { MdDelete } from "react-icons/md";
+import { Helmet } from "react-helmet";
 
 const ManageReviews = () => {
   const [users, setUsers] = useState([]);
@@ -72,6 +73,9 @@ const ManageReviews = () => {
   };
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title> Manage Reviews - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Manage Reviews

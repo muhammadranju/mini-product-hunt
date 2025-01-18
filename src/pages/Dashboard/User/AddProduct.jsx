@@ -4,6 +4,7 @@ import { TagsInput } from "react-tag-input-component";
 import toast from "react-hot-toast";
 import { AuthContext } from "@/context/AuthProvider";
 import swal from "sweetalert";
+import { Helmet } from "react-helmet";
 
 const AddProduct = () => {
   const { user, signOut } = useContext(AuthContext); // Assume user info comes from context
@@ -95,6 +96,9 @@ const AddProduct = () => {
   };
   return (
     <div className="ml-0 md:ml-64 py-16 mt-5 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title>Add Products - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-4">Add Product</h2>
         <form onSubmit={handleSubmit}>

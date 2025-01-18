@@ -1,5 +1,6 @@
 import { AuthContext } from "@/context/AuthProvider";
 import React, { useState, useEffect, useContext } from "react";
+import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import swal from "sweetalert";
 
@@ -112,6 +113,9 @@ const ManageUsers = () => {
   };
   return (
     <div className="ml-0 md:ml-64 py-16 h-screen overflow-auto bg-gray-50">
+      <Helmet>
+        <title> Manage Users - Product Hunt</title>
+      </Helmet>
       <div className="w-11/12 mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
         <h2 className="text-2xl font-semibold text-center mb-6">
           Manage Users
