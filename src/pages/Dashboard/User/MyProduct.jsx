@@ -174,6 +174,7 @@ const MyProduct = () => {
                 </th>
               </tr>
             </thead>
+
             <tbody>
               {products?.map((product) => (
                 <tr key={product.id} className="hover:bg-gray-50">
@@ -224,6 +225,13 @@ const MyProduct = () => {
               ))}
             </tbody>
           </table>
+          {products.length === 0 && (
+            <div className="flex justify-center items-center my-64 ">
+              <p className="text-center flex text-5xl font-semibold items-center justify-center text-gray-800 dark:text-gray-300">
+                No products found.
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

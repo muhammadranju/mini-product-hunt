@@ -21,11 +21,18 @@ const PaymentForm = ({ amount }) => {
   const [clientSecret, setClientSecret] = useState("");
   const { setLoading } = useContext(AuthContext);
 
+  const [error, setError] = useState("");
+
   const { user } = useContext(AuthContext);
   const [role] = useRole();
 
   const handleCouponApply = async () => {
     try {
+      if (coupon === "") {
+        setError("Please enter a coupon code.");
+
+        return;
+      }
       // Simulate API call
       const response = await fetch(
         `${import.meta.env.VITE_BackendURL}/api/admin/coupons/validate-coupon`,
@@ -43,6 +50,7 @@ const PaymentForm = ({ amount }) => {
       console.log(data);
 
       if (data.valid) {
+        setError("");
         toast.success(`Discount Price: ${data?.discountPrice}`);
         setDiscountedAmount(data?.discountPrice);
         setClientSecret(data?.clientSecret);
@@ -56,6 +64,12 @@ const PaymentForm = ({ amount }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (clientSecret === "") {
+      setError("You can't proceed without a payment.");
+      return;
+    }
+
     setPaymentProcessing(true);
 
     if (!stripe || !elements) {
@@ -77,8 +91,9 @@ const PaymentForm = ({ amount }) => {
       }
     );
 
-    if (paymentIntent.status === "succeeded") {
+    if (paymentIntent?.status === "succeeded") {
       setLoading(true);
+      setError("");
       const response = await fetch(
         `${import.meta.env.VITE_BackendURL}/api/users/${role?.user?._id}`,
         {
@@ -117,10 +132,13 @@ const PaymentForm = ({ amount }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="  mx-auto">
+    <form onSubmit={handleSubmit} className=" max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Payment Now</h2>
       <label className="block mb-4">
-        <span className="text-gray-700">Coupon Code:</span>
+        <span className="text-gray-700">
+          Coupon Code:{" "}
+          <small className="text-red-500">{error ? error : ""}</small>
+        </span>
         <div className="flex">
           <input
             type="text"
