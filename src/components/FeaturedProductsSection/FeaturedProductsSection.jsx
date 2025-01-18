@@ -9,9 +9,7 @@ const FeaturedProductsSection = () => {
     const fetchProducts = async () => {
       setLoading(true);
       const response = await fetch(
-        `${
-          import.meta.env.VITE_BackendURL
-        }/api/products?status=accepted&sort=false`,
+        `${import.meta.env.VITE_BackendURL}/api/featured/products`,
         {
           method: "GET",
         }
@@ -49,6 +47,13 @@ const FeaturedProductsSection = () => {
               ))
           )}
         </div>
+        {products?.length === 0 && (
+          <div className="flex justify-center items-center my-10">
+            <p className="text-center flex text-xl font-semibold items-center justify-center text-gray-800 dark:text-gray-300">
+              No featured products found.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
