@@ -26,9 +26,15 @@ const FeaturedProductsSection = () => {
   return (
     <section className="py-16 ">
       <div className=" mx-auto px-4 sm:px-6 lg:px-8">
-        <h3 className="text-3xl font-bold text-slate-900 mb-8">
-          Featured Products
-        </h3>
+        <div className="flex flex-col justify-center items-center mb-8">
+          <h3 className="text-3xl text-center font-bold text-slate-900 ">
+            Featured Products
+          </h3>
+          <p className="text-center  lg:w-[500px]">
+            Here are some of our featured products. Check out our latest
+            products and
+          </p>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Product Cards */}
 
