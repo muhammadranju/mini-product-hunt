@@ -19,6 +19,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PrivateRoutes from "./PrivateRoute";
 import IsAdmin from "./IsAdmin";
 import ManageReviews from "@/pages/Dashboard/Admin/ManageReviews";
+import IsModerator from "./IsModerator";
 
 const router = createBrowserRouter([
   {
@@ -84,11 +85,20 @@ const router = createBrowserRouter([
       // Moderator Dashboard
       {
         path: "moderator/product-review",
-        element: <ProductReview />,
+
+        element: (
+          <IsModerator>
+            <ProductReview />
+          </IsModerator>
+        ),
       },
       {
         path: "moderator/reported-contents",
-        element: <ReportedContents />,
+        element: (
+          <IsModerator>
+            <ReportedContents />
+          </IsModerator>
+        ),
       },
       // Admin Dashboard
       {
